@@ -1,0 +1,26 @@
+html {
+    font-size: 150%;
+}
+
+
+.navbar {
+    border-bottom: 1px solid rgb(204, 204, 204);
+    padding: 10px 20px 0px 20px;
+}
+
+.navbar-title {
+    font-size: 2rem;
+}
+
+.sidebar {
+    border-right: 1px solid rgb(204, 204, 204);
+}
+
+.main {
+    padding: 15px;
+}
+
+.restaurant-image {
+    border-radius: 8px;
+    border: 1px solid rgb(204, 204, 204);
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+        <link rel="stylesheet" href="./style.css">
+        <title>foo revoo</title>
+    </head>
+
+
+    <body>
+        <header class="navbar">
+            <section class="navbar-section">
+              <a href="./home" class="navbar-brand mr-2"><h1 class="navbar-title">foo revoo</h1></a>
+            </section>
+            <section class="navbar-section hide-md">
+              <div class="input-group input-inline navbar-login">
+
+                <input class="form-input" type="email" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,14}$">
+                <input class="form-input" type="password" placeholder="Password" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$">
+
+                  
+                <button class="btn btn-primary input-group-btn">Login</button>
+              </div>
+            </section>
+
+            <!-- SHOW LIST ICON ON SM -> OPEN MODAL, WITH LOGIN AND MENU -->
+            
+        </header>
+
+        <div class="container">
+            <div class="columns">
+            <div class="column col-3 hide-md sidebar">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a href="#">Random Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">Top Reviews</a>
+                        <ul class="nav">
+                        <li class="nav-item">
+                            <a href="#">Aqua Dinner & Drinks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#">Pescadoras</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#">Bada Bing Burger</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#">Restaurang Hemma</a>
+                        </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">FAQ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./contact">Contact</a>
+                    </li>
+                    </ul>
+                </div>
+                <div class="column col-md-12 col-9 container main">
+                    {{{body}}}
+                </div>
+
+            </div>
+        </div>
+    </body>
+
+</html>
