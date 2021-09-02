@@ -20,6 +20,8 @@ app.engine('hbs', expressHandlebars({
     defaultLayout: "primary-layout.hbs"
 }))
 
+app.use(express.static("public"));
+
 app.get("/home", (req, res) => {
     res.render("home.hbs", {})
 })
@@ -36,9 +38,6 @@ app.get("/restaurant-review", (req, res) => {
     res.render("restaurant-review.hbs", restaurants.aqua)
 })
 
-app.get("/style.css", (req,res) => {
-    res.sendFile(__dirname + "/style.css")
-})
 
 app.listen(3000, () => {
     console.log("listening on 3000...")

@@ -2,7 +2,6 @@ html {
     font-size: 150%;
 }
 
-
 .navbar {
     border-bottom: 1px solid rgb(204, 204, 204);
     padding: 10px 20px 0px 20px;
@@ -14,6 +13,18 @@ html {
 
 .sidebar {
     border-right: 1px solid rgb(204, 204, 204);
+    border-bottom: 1px solid rgb(204, 204, 204);
+    padding-bottom: 20px;
+}
+
+.sidebar-dropdown {
+    padding-top: 15px;
+}
+
+.sidebar-login {
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-right: 10px;
 }
 
 .main {

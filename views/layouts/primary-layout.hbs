@@ -1,77 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
-        <link rel="stylesheet" href="./style.css">
-        <title>foo revoo</title>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+    <link rel="stylesheet" href="primary-layout.css">
+    <title>foo revoo</title>
+</head>
 
 
-    <body>
-        <header class="navbar">
-            <section class="navbar-section">
-              <a href="./home" class="navbar-brand mr-2"><h1 class="navbar-title">foo revoo</h1></a>
-            </section>
-            <section class="navbar-section hide-md">
-              <div class="input-group input-inline navbar-login">
+<body>
+    <header class="navbar">
+        <section class="navbar-section">
+            <a href="./home" class="navbar-brand mr-2">
+                <h1 class="navbar-title">foo revoo</h1>
+            </a>
+        </section>
 
-                <input class="form-input" type="email" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,14}$">
-                <input class="form-input" type="password" placeholder="Password" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$">
+        <section class="navbar-section hide-md">
+            <div class="input-group input-inline navbar-login">
 
-                  
+                <input class="form-input" type="email" placeholder="Email"
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,14}$">
+                <input class="form-input" type="password" placeholder="Password"
+                    pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$">
+
+
                 <button class="btn btn-primary input-group-btn">Login</button>
-              </div>
+            </div>
+        </section>
+
+
+        <!-- SHOW LIST ICON ON SM -> OPEN MODAL, WITH LOGIN AND MENU -->
+
+    </header>
+
+    <div class="container">
+        <div class="columns">
+            <section class="navbar-section col-md-12 show-md">
+                <div class="input-group input-inline sidebar-login">
+
+                    <input class="form-input" type="email" placeholder="Email"
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,14}$">
+                    <input class="form-input" type="password" placeholder="Password"
+                        pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$">
+
+
+                    <button class="btn btn-primary input-group-btn">Login</button>
+                </div>
             </section>
+            <div class="column col-3 col-md-12 sidebar">
+                <div class="accordion sidebar-dropdown">
+                    <input type="checkbox" id="accordion-1" name="accordion-checkbox" hidden>
+                    <label class="accordion-header" for="accordion-1">
+                        <i class="icon icon-arrow-right mr-1"></i>
+                        Top Reviews
+                    </label>
+                    <div class="accordion-body">
+                        <ul class="nav">
+                            <li class="nav-item">
+                                <a href="#">Aqua Dinner & Drinks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#">Pescadoras</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#">Bada Bing Burger</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#">Restaurang Hemma</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-            <!-- SHOW LIST ICON ON SM -> OPEN MODAL, WITH LOGIN AND MENU -->
-            
-        </header>
-
-        <div class="container">
-            <div class="columns">
-            <div class="column col-3 hide-md sidebar">
                 <ul class="nav">
                     <li class="nav-item">
                         <a href="#">Random Reviews</a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#">Top Reviews</a>
-                        <ul class="nav">
-                        <li class="nav-item">
-                            <a href="#">Aqua Dinner & Drinks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#">Pescadoras</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#">Bada Bing Burger</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#">Restaurang Hemma</a>
-                        </li>
-                        </ul>
-                    </li>
+
                     <li class="nav-item">
                         <a href="./about">About</a>
                     </li>
+
                     <li class="nav-item">
                         <a href="#">FAQ</a>
                     </li>
                     <li class="nav-item">
                         <a href="./contact">Contact</a>
                     </li>
-                    </ul>
-                </div>
-                <div class="column col-md-12 col-9 container main">
-                    {{{body}}}
+                </ul>
+
+                <!-- mutually exclusive Accordions example (with same input names) -->
+            </div>
+            {{!-- <div class="container show-md mobile-sidebar">
+                <section class="navbar-section col-12">
+                    <div class="input-group input-inline navbar-login">
+
+                        <input class="form-input" type="email" placeholder="Email"
+                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,14}$">
+                        <input class="form-input" type="password" placeholder="Password"
+                            pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$">
+
+
+                        <button class="btn btn-primary input-group-btn">Login</button>
+                    </div>
+                </section>
+
+                <div class="accordion">
+                    <input type="checkbox" id="accordion-1" name="accordion-checkbox" hidden>
+                    <label class="accordion-header" for="accordion-1">
+                        <i class="icon icon-arrow-right mr-1"></i>
+                        Title
+                    </label>
+                    <div class="accordion-body">
+                        <ul>
+                            <li>hehe</li>
+                            <li><a href="">hoho</a></li>www
+                        </ul>
+                    </div>
                 </div>
 
+                <!-- mutually exclusive Accordions example (with same input names) -->
+                <div class="accordion">
+                    <input type="radio" id="accordion-1" name="accordion-radio" hidden>
+                    <label class="accordion-header" for="accordion-1">
+                        Title
+                    </label>
+                    <div class="accordion-body">
+                        <!-- Accordions content -->
+                    </div>
+                </div>
+            </div> --}}
+            <div class="column col-md-12 col-9 container main">
+                {{{body}}}
             </div>
+
         </div>
-    </body>
+    </div>
+</body>
 
 </html>
