@@ -92,7 +92,7 @@ app.post("/update-review", (req,res) => {
     for (var i = 0; i < allRestaurants.length; i++) {
         if (allRestaurants[i].Id == req.body.Id) {
             console.log(`updating review for ${req.body.Name}`);
-            db.run(`UPDATE Restaurant SET NAME = ?, Score = ?, Review = ?, Location = ?, ImageLink = ? WHERE Id = ?`, [req.body.Name, req.body.Score, req.body.Review, req.body.Location, req.body.ImageLink, req.body.Id], (error) => {
+            db.run(`UPDATE Restaurant SET Name = ?, Score = ?, Review = ?, City = ?, Address = ?, ImageLink = ? WHERE Id = ?`, [req.body.Name, req.body.Score, req.body.Review, req.body.City, req.body.Address, req.body.ImageLink, req.body.Id], (error) => {
                 if (error) console.log(error);
                 else {
                     console.log(`Updated row with Id : ${req.body.Id} and Name : ${req.body.Name}`);
@@ -106,7 +106,7 @@ app.post("/update-review", (req,res) => {
 })
 
 app.post("/add-review", (req,res) => {
-    db.run(`INSERT INTO Restaurant (Name, Score, Review, Location, ImageLink) VALUES (?, ?, ?, ?, ?) `, [req.body.Name, req.body.Score, req.body.Review, req.body.Location, req.body.ImageLink], (error) => {
+    db.run(`INSERT INTO Restaurant (Name, Score, Review, ImageLink, City, Address) VALUES (?, ?, ?, ?, ?, ?) `, [req.body.Name, req.body.Score, req.body.Review, req.body.ImageLink, req.body.City, req.body.Address], (error) => {
         if (error) console.log(error);
         else {
             console.log(`Successfully inserted a row into Restaurant!`);

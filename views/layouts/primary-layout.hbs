@@ -24,7 +24,7 @@
             <div class="input-group input-inline navbar-login">
 
                 <input class="form-input" type="email" placeholder="Email"
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,14}$">
+                    pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,14}$">
                 <input class="form-input" type="password" placeholder="Password"
                     pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$">
 
@@ -44,7 +44,7 @@
                 <div class="input-group input-inline sidebar-login">
 
                     <input class="form-input" type="email" placeholder="Email"
-                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,14}$">
+                        pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,14}$">
                     <input class="form-input" type="password" placeholder="Password"
                         pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$">
 
@@ -53,30 +53,6 @@
                 </div>
             </section>
             <div class="column col-3 col-md-12 sidebar">
-                <div class="accordion sidebar-dropdown">
-                    <input type="checkbox" id="accordion-1" name="accordion-checkbox" hidden>
-                    <label class="accordion-header" for="accordion-1">
-                        <i class="icon icon-arrow-right mr-1"></i>
-                        Top Reviews
-                    </label>
-                    <div class="accordion-body">
-                        <ul class="nav">
-                            <li class="nav-item">
-                                <a href="#">Aqua Dinner & Drinks</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#">Pescadores</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#">Bada Bing</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#">Restaurang Hemma</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
                 <ul class="nav">
                     <li class="nav-item">
                         <a href="./all-reviews">All Reviews</a>
@@ -92,16 +68,28 @@
                     <li class="nav-item">
                         <a href="./contact">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a href="./add-reviews">Add Review</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="./edit-reviews">Edit Reviews</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="./delete-reviews">Delete Review</a>
-                    </li>
                 </ul>
+
+                <div class="accordion sidebar-dropdown">
+                    <input type="checkbox" id="accordion-1" name="accordion-checkbox" hidden>
+                    <label class="accordion-header" for="accordion-1">
+                        <i class="icon icon-arrow-right mr-1"></i>
+                        Admin Tools
+                    </label>
+                    <div class="accordion-body">
+                        <ul class="nav">
+                            <li class="nav-item">
+                                <a href="./add-reviews">Add Reviews</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./edit-reviews">Edit Reviews</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./delete-reviews">Delete Reviews</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
             </div>
             <div class="column col-md-12 col-9 container main">

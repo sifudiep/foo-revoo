@@ -1,8 +1,8 @@
-<form class="form-group" method="post" action="/add-review">
+<form class="form-group columns" method="post" action="/add-review">
     <label class="form-label">Name</label>
-    <input class="form-input" type="text" name="Name" placeholder="Name" pattern="[A-Za-z0-9.\s!%&/?]{2,}" required="required">
+    <input class="form-input" type="text" name="Name" placeholder="Name" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
 
-    <label class="form-label" name="Score">Score: Enter with value from 0-10</label required="required">
+    <label class="form-label">Score</label required="required">
     <select name="Score" class="form-select select-sm">
         <option value="10">10</option>
         <option value="9">9</option>
@@ -16,13 +16,16 @@
         <option value="1">1</option>
     </select>
 
-    <label class="form-label" name="Review">Review</label>
+    <label class="form-label">Review</label>
     <input class="form-input" type="text" name="Review" placeholder="Review" required="required">
 
-    <label class="form-label" name="Location">Location</label>
-    <input class="form-input" type="text" name="Location" placeholder="Location" required="required">
+    <label class="form-label">City</label>
+    <input class="form-input" type="text" name="City" placeholder="City" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
 
-    <label class="form-label" name="ImageLink">ImageLink</label>
+    <label class="form-label">Address</label>
+    <input class="form-input" type="text" name="Address" placeholder="Address" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
+
+    <label class="form-label">ImageLink</label>
     <input class="form-input" type="text" name="ImageLink" placeholder="ImageLink">
 
     <input type="submit" class="btn btn-primary col-12" style="margin-top: 10px">
