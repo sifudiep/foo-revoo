@@ -1,0 +1,26 @@
+<h3>All restaurants count : {{allRestaurants.length}}</h3>
+
+
+
+{{#each allRestaurants}}
+    <form class="columns review-editor" method="update" action="update-review">
+        <input class="form-input col-4" type="text" name="Name" placeholder="Name" pattern="[A-Za-z0-9.\s!%&/?]{2,}" value="{{this.Name}}" required="required">
+        <input class="form-input col-4" type="text" name="Location" placeholder="Location" required="required" value="{{this.Location}}">
+        <select name="Score" class="form-select form-lg select-sm col-4">
+            <option value="{{this.Score}}">{{this.Score}}</option>
+            <option value="10">10</option> 
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+        </select>
+        <input class="form-input col-12" type="text" name="Review" placeholder="Review" required="required" value="{{this.Review}}">
+        <input class="form-input col-9" type="text" name="ImageLink" placeholder="ImageLink" value="{{this.ImageLink}}">
+        <input type="submit" class="btn btn-success col-3" value="Update">
+    </form>
+{{/each}}

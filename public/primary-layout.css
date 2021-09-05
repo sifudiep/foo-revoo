@@ -35,3 +35,8 @@ html {
     border-radius: 8px;
     border: 1px solid rgb(204, 204, 204);
 }
+
+.review-editor {
+    background-color: #303742;
+    padding: 10px 10px 0px 10px;
+}
