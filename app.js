@@ -57,8 +57,8 @@ app.get("/all-reviews", (req, res) => {
     res.render("all-reviews.hbs", {allRestaurants})
 })
 
-app.get("/add-review", (req,res) => {
-    res.render("add-review.hbs")
+app.get("/add-reviews", (req,res) => {
+    res.render("add-reviews.hbs")
 })
 
 app.get("/edit-reviews", (req, res) => {
@@ -66,13 +66,46 @@ app.get("/edit-reviews", (req, res) => {
     res.render("edit-reviews.hbs", {allRestaurants})
 })
 
-app.post("/update-review", (req,res) => {
-    console.log(`trying to update review for ${req.body.Name}...`);
-    res.render("edit-reviews.hbs")
+app.get("/delete-reviews", (req, res) => {
+    updateAllRestaurants();
+    res.render("delete-reviews.hbs", {allRestaurants});
 })
 
-app.post("/submit-review", (req,res) => {
-    console.log(req.body)
+app.post("/delete-review", (req, res) => {
+    console.log(`posted to delete-review...`);
+    for (var i = 0; i < allRestaurants.length; i++) {
+        if (allRestaurants[i].Id == req.body.Id) {
+            db.run(`DELETE From Restaurant WHERE Id = ?`, [req.body.Id], (error) => {
+                if (error) console.log(error);
+                else {
+                    console.log(`Deleted row with Id : ${req.body.Id} and Name : ${req.body.Name}`);
+                }
+            })
+        }
+    }
+
+    updateAllRestaurants();
+    res.redirect("delete-reviews")
+})
+
+app.post("/update-review", (req,res) => {
+    for (var i = 0; i < allRestaurants.length; i++) {
+        if (allRestaurants[i].Id == req.body.Id) {
+            console.log(`updating review for ${req.body.Name}`);
+            db.run(`UPDATE Restaurant SET NAME = ?, Score = ?, Review = ?, Location = ?, ImageLink = ? WHERE Id = ?`, [req.body.Name, req.body.Score, req.body.Review, req.body.Location, req.body.ImageLink, req.body.Id], (error) => {
+                if (error) console.log(error);
+                else {
+                    console.log(`Updated row with Id : ${req.body.Id} and Name : ${req.body.Name}`);
+                }
+            })
+        }
+    }
+
+    updateAllRestaurants();
+    res.redirect("edit-reviews")
+})
+
+app.post("/add-review", (req,res) => {
     db.run(`INSERT INTO Restaurant (Name, Score, Review, Location, ImageLink) VALUES (?, ?, ?, ?, ?) `, [req.body.Name, req.body.Score, req.body.Review, req.body.Location, req.body.ImageLink], (error) => {
         if (error) console.log(error);
         else {
@@ -81,8 +114,8 @@ app.post("/submit-review", (req,res) => {
 
     });
     
-
-    res.render("add-review.hbs");
+    updateAllRestaurants();
+    res.redirect("add-reviews");
 });
 
 app.listen(3000, () => {
