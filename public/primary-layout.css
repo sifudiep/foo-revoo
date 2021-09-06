@@ -40,3 +40,9 @@ html {
     background-color: #303742;
     padding: 10px 10px 0px 10px;
 }
+
+.form-label {
+    text-align: center;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 3px;
+}
