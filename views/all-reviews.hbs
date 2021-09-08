@@ -1,1 +1,24 @@
-<h1>All Reviews... ever</h1>
+<h1>All Reviews</h1>
+{{restaurant.Name}}
+
+<ul class="pagination">
+  {{!-- PREVIOUS --}}
+  <li class="page-item">
+    <a href="?page=1">1</a>
+  </li>
+  {{!-- CURRENT --}}
+  <li class="page-item active">
+    <a href="#">2</a>
+  </li>
+  {{!-- NEXT --}}
+  <li class="page-item">
+    <a href="#">3</a>
+  </li>
+  <li class="page-item">
+    <span>...</span>
+  </li>
+  {{!-- LAST ITEM --}}
+  <li class="page-item">
+    <a href="#">12</a>
+  </li>
+</ul>

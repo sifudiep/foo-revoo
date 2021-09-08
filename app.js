@@ -26,16 +26,21 @@ function updateAllRestaurants() {
 
 // Checks authentication from database instead of req.session, should be better for memory leaks?
 function checkAuthentication(session) {
+    let authenticated = false;
+    let dbQueryFinished = false;
     db.get("SELECT * FROM Session WHERE sid = ?", [session.id], (error, result) => {
         if (error) throw error;
         else {
             if (result) {
                 let sess = JSON.parse(result.sess)
-                if (sess.isAuth) return true;
+                if (sess.isAuth) {
+                    console.log(this);
+                    authenticated = true;
+                    dbQueryFinished = true;
+                } 
+                console.log(`Finished with db request.`);
             }
         }
-
-        return false;
     })
 }
 
@@ -102,13 +107,15 @@ app.get("/restaurant-review", (req, res) => {
 })
 
 app.get("/all-reviews", (req, res) => {
+    const page = parseInt(req.query.page);
+    
     res.render("all-reviews.hbs", {
-        allRestaurants
+        restaurant : allRestaurants[page]
     })
 })
 
 app.get("/add-reviews", (req, res) => {
-    if (checkAuthentication(req.session) == false) {
+    if (checkAuthentication(req.session) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -117,7 +124,7 @@ app.get("/add-reviews", (req, res) => {
 })
 
 app.get("/edit-reviews", (req, res) => {
-    if (checkAuthentication(req.session) == false) {
+    if (checkAuthentication(req.session) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -129,7 +136,7 @@ app.get("/edit-reviews", (req, res) => {
 })
 
 app.get("/delete-reviews", (req, res) => {
-    if (checkAuthentication(req.session) == false) {
+    if (checkAuthentication(req.session) === false) {
         res.redirect("/access-denied")
         return;
     };
@@ -148,25 +155,6 @@ app.get("/login", (req, res) => {
     res.render("login.hbs", {});
 })
 
-// GET REQUESTS after this does not work since app.js renders error.hbs to them instead.
-app.get("/:id", (req, res) => {
-    updateAllRestaurants();
-    let targetRestaurant = undefined;
-
-    for (let i = 0; i < allRestaurants.length; i++) {
-        if (allRestaurants[i].Id == req.params.id) {
-            targetRestaurant = allRestaurants[i];
-        }
-    }
-
-    if (targetRestaurant === undefined) {
-        res.render("error.hbs");
-    } else {
-        res.render("restaurant-review.hbs", {
-            targetRestaurant
-        })
-    }
-})
 
 // Add counter to user to lock account, so you can't have infinite login attempts to account.
 app.post("/login", (req, res) => {
