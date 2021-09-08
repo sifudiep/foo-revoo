@@ -4,17 +4,17 @@
 
 {{#each allRestaurants}}
     <form class="columns review-editor" method="post" action="update-review">
-        <label class="form-label col-1" style="background-color: white; text-align:center" name="Id">
-            {{this.Id}}
-            <input type="hidden" name="Id" value="{{this.Id}}">
+        <label class="form-label col-1" style="background-color: white; text-align:center" name="id">
+            {{this.id}}
+            <input type="hidden" name="id" value="{{this.id}}">
         </label>
-        <input class="form-input col-3" type="text" name="name" placeholder="Name" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" value="{{this.Name}}" required="required">
+        <input class="form-input col-3" type="text" name="name" placeholder="Name" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" value="{{this.name}}" required="required">
 
-        <input type="text" placeholder="City" name="city" pattern="[A-Za-z0-9ÄÖÅäöå.\s!%&/?]{2,}" required="required" value="{{this.City}}" class="form-input col-2">
-        <input type="text" placeholder="Address" name="address" pattern="[A-Za-z0-9ÄÖÅäöå.\s!%&/?]{2,}" required="required" value="{{this.Address}}" class="form-input col-3">
+        <input type="text" placeholder="City" name="city" pattern="[A-Za-z0-9ÄÖÅäöå.\s!%&/?]{2,}" required="required" value="{{this.city}}" class="form-input col-2">
+        <input type="text" placeholder="Address" name="address" pattern="[A-Za-z0-9ÄÖÅäöå.\s!%&/?]{2,}" required="required" value="{{this.address}}" class="form-input col-3">
 
-        <select name="Score" class="form-select form-lg select-sm col-3">
-            <option value="{{this.Score}}">{{this.Score}}</option>
+        <select name="score" class="form-select form-lg select-sm col-3">
+            <option value="{{this.score}}">{{this.score}}</option>
             <option value="10">10</option> 
             <option value="9">9</option>
             <option value="8">8</option>
@@ -27,8 +27,8 @@
             <option value="1">1</option>
         </select>
 
-        <input class="form-input col-12" type="text" name="review" placeholder="Review" required="required" value="{{this.Review}}">
-        <input class="form-input col-9" type="text" name="imageLink" placeholder="ImageLink" value="{{this.ImageLink}}">
+        <input class="form-input col-12" type="text" name="review" placeholder="Review" required="required" value="{{this.review}}">
+        <input class="form-input col-9" type="text" name="imageLink" placeholder="ImageLink" value="{{this.imageLink}}">
         <input type="submit" class="btn btn-success col-3" value="Update">
     </form>
 {{/each}}

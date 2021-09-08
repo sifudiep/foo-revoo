@@ -53,8 +53,7 @@ app.use(express.urlencoded({
 }));
 app.use(session({
     store: new sqliteStore({
-        client: db,
-        table: "Session"
+        client: db
     }),
     saveUninitialized: false,
     resave: false,
@@ -161,9 +160,7 @@ app.post("/delete-review", (req, res) => {
     }
     for (let i = 0; i < allRestaurants.length; i++) {
         if (allRestaurants[i].id == req.body.id) {
-            console.log(`found him! with name: ${req.body.name} and id : ${req.body.id}`);
-            let info = db.prepare("DELETE FROM restaurants WHERE id = ?").run(req.body.id)
-            console.log(info.changes);
+            db.prepare("DELETE FROM restaurants WHERE id = ?").run(req.body.id)
         }
     }
 
@@ -178,10 +175,10 @@ app.post("/update-review", (req, res) => {
     }
 
     for (let i = 0; i < allRestaurants.length; i++) {
-        if (allRestaurants[i].Id == req.body.id) {
-            console.log(`updating review for ${req.body.name}`);
-            db.prepare("UPDATE restaurants SET name = ?, score = ?, review = ?, city ?, address = ?, imageLink = ? WHERE id = ?")
-                .run(req.body.name, req.body.score, req.body.review, req.body.city, req.body.address, req.body.imageLink, req.body.id);
+        if (allRestaurants[i].id == req.body.id) {
+            if (req.body.name !== allRestaurants[i].name) db.prepare("UPDATE restaurants SET name = ? WHERE id = ?").run(req.body.name, req.body.id);
+            db.prepare("UPDATE restaurants SET score = ?, review = ?, city = ?, address = ?, imageLink = ? WHERE id = ?")
+                .run(req.body.score, req.body.review, req.body.city, req.body.address, req.body.imageLink, req.body.id);
         }
     }
 
