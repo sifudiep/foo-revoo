@@ -88,10 +88,33 @@ app.get("/restaurant-review", (req, res) => {
 })
 
 app.get("/all-reviews", (req, res) => {
+    updateAllRestaurants();
+    const restaurantsPerPage = 2;
+
     const page = parseInt(req.query.page);
+    let nextPage = page + 1;
+    let previousPage = page - 1;
+    let lastPage = allRestaurants.length / restaurantsPerPage;
+
+    const endIndex = (page * restaurantsPerPage);
+    let startIndex = endIndex - restaurantsPerPage;
+    
+    let restaurantsInPage = allRestaurants.slice(startIndex, endIndex);
+
+    // Basically rounds up, i.e 13/4 = 3.25 => 4
+    if (lastPage % 1 != 0) {
+        lastPage = Math.round(lastPage - 0.5) + 1 
+    }
+    
+    if (previousPage < 1) previousPage = false;
+    if (nextPage > lastPage) nextPage = false;
     
     res.render("all-reviews.hbs", {
-        restaurant : allRestaurants[page]
+        restaurantsInPage,
+        page,
+        nextPage,
+        previousPage,
+        lastPage,
     })
 })
 

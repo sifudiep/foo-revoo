@@ -1,24 +1,43 @@
-<h1>All Reviews</h1>
-{{restaurant.Name}}
+{{#each restaurantsInPage}}
+  <div class="restaurant-container">
+    <h1>{{this.name}}</h1>
+    <h4>Address : {{this.address}}</h4>
+    <h4>Overall score : {{this.score}}/10</h4>
+    <p style="max-width: 900px;">{{this.review}}</p>
+    <img class="restaurant-image" src="{{this.imageLink}}" alt="Image of {{name}}">
+  </div>
+{{/each}}
 
 <ul class="pagination">
-  {{!-- PREVIOUS --}}
+  {{!-- FIRST ITEM --}}
   <li class="page-item">
     <a href="?page=1">1</a>
   </li>
-  {{!-- CURRENT --}}
-  <li class="page-item active">
-    <a href="#">2</a>
+
+  <li class="page-item">
+    <span>...</span>
   </li>
+  {{#if previousPage}}
+  {{!-- PREVIOUS --}}
+  <li class="page-item">
+    <a href="?page={{previousPage}}">{{previousPage}}</a>
+  </li>
+  {{/if}}
+  {{!-- CURRENT --}}
+  <li class="page-item active disabled">
+    <a href="?page={{page}}">{{page}}</a>
+  </li>
+  {{#if nextPage}}
   {{!-- NEXT --}}
   <li class="page-item">
-    <a href="#">3</a>
+    <a href="?page={{nextPage}}">{{nextPage}}</a>
   </li>
+  {{/if}}
   <li class="page-item">
     <span>...</span>
   </li>
   {{!-- LAST ITEM --}}
   <li class="page-item">
-    <a href="#">12</a>
+    <a href="?page={{lastPage}}">{{lastPage}}</a>
   </li>
 </ul>

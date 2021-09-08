@@ -36,6 +36,13 @@ html {
     border: 1px solid rgb(204, 204, 204);
 }
 
+.restaurant-container {
+    background-color: rgb(204, 204, 204);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
 .review-editor {
     background-color: #303742;
     padding: 10px 10px 0px 10px;
