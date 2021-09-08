@@ -1,14 +1,14 @@
 const express = require("express");
-const bcrypt = require("bcryptjs")
-const expressHandlebars = require("express-handlebars")
+const bcrypt = require("bcryptjs");
+const expressHandlebars = require("express-handlebars");
 const app = express();
 
-const session = require("express-session")
+const session = require("express-session");
 const sqliteStore = require("better-sqlite3-session-store")(session);
 
 const db = require("better-sqlite3")('storage/database.db', {
     fileMustExist: true
-})
+});
 
 // MODEL ATTRIBUTES ORDER - 
 // Name, Score, Review, Location, ImageLink
@@ -191,14 +191,7 @@ app.post("/add-review", (req, res) => {
         res.redirect("/access-denied");
         return; 
     }
-
-    db.run(`INSERT INTO Restaurant (Name, Score, Review, ImageLink, City, Address) VALUES (?, ?, ?, ?, ?, ?) `, [req.body.name, req.body.score, req.body.review, req.body.imageLink, req.body.city, req.body.address], (error) => {
-        if (error) throw error;
-        else {
-            console.log(`Successfully inserted a row into Restaurant!`);
-        }
-
-    });
+    db.prepare("INSERT INTO restaurants (name, score, review, imageLink, city, address) VALUES (?, ?, ?, ?, ?, ?)").run(req.body.name, req.body.score, req.body.review, req.body.imageLink, req.body.city, req.body.address);
 
     updateAllRestaurants();
     res.redirect("add-reviews");
