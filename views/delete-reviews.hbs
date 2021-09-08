@@ -2,15 +2,15 @@
 
 {{#each allRestaurants}}
     <form class="columns review-editor" method="post" action="delete-review">
-        <label class="form-label col-1" style="background-color: white; text-align:center" name="Id">
-            {{this.Id}}
-            <input type="hidden" name="Id" value="{{this.Id}}">
+        <label class="form-label col-1" style="background-color: white; text-align:center" name="id">
+            {{this.id}}
+            <input type="hidden" name="id" value="{{this.id}}">
         </label>
-        <input class="form-input col-3" type="text" name="Name" placeholder="Name" pattern="[A-Za-z0-9.\s!%&/?]{2,}" value="{{this.Name}}">
-        <input class="form-input col-2" type="text" name="City" placeholder="City" value="{{this.City}}">
-        <input class="form-input col-3" type="text" name="Address" placeholder="Address" value="{{this.Address}}">
+        <input class="form-input col-3" type="text" name="name" placeholder="Name" pattern="[A-Za-z0-9.\s!%&/?]{2,}" value="{{this.name}}">
+        <input class="form-input col-2" type="text" name="city" placeholder="City" value="{{this.city}}">
+        <input class="form-input col-3" type="text" name="address" placeholder="Address" value="{{this.address}}">
         <select name="Score" class="form-select form-lg select-sm col-3">
-            <option value="{{this.Score}}">{{this.Score}}</option>
+            <option value="{{this.score}}">{{this.score}}</option>
             <option value="10">10</option> 
             <option value="9">9</option>
             <option value="8">8</option>
@@ -22,8 +22,8 @@
             <option value="2">2</option>
             <option value="1">1</option>
         </select>
-        <input class="form-input col-12" type="text" name="Review" placeholder="Review" value="{{this.Review}}">
-        <input class="form-input col-9" type="text" name="ImageLink" placeholder="ImageLink" value="{{this.ImageLink}}">
+        <input class="form-input col-12" type="text" name="review" placeholder="Review" value="{{this.review}}">
+        <input class="form-input col-9" type="text" name="imageLink" placeholder="ImageLink" value="{{this.imageLink}}">
         <input type="submit" class="btn btn-error col-3" value="Delete">
     </form>
 {{/each}}

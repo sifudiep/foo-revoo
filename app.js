@@ -1,12 +1,14 @@
 const express = require("express");
 const bcrypt = require("bcryptjs")
-const session = require("express-session")
 const expressHandlebars = require("express-handlebars")
 const app = express();
-const SQLiteStore = require("connect-sqlite3")(session);
 
-const sqllite3 = require("sqlite3")
-const db = new sqllite3.Database("storage/database.db")
+const session = require("express-session")
+const sqliteStore = require("better-sqlite3-session-store")(session);
+
+const db = require("better-sqlite3")('storage/database.db', {
+    fileMustExist: true
+})
 
 // MODEL ATTRIBUTES ORDER - 
 // Name, Score, Review, Location, ImageLink
@@ -16,53 +18,33 @@ const port = 3000;
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
 
 function updateAllRestaurants() {
-    db.all("SELECT * FROM Restaurant", (error, restaurants) => {
-        if (error) throw error;
-        else {
-            allRestaurants = restaurants;
-        }
-    })
+    allRestaurants = db.prepare("SELECT * FROM restaurants").all();
 }
 
 // Checks authentication from database instead of req.session, should be better for memory leaks?
-function checkAuthentication(session) {
-    let authenticated = false;
-    let dbQueryFinished = false;
-    db.get("SELECT * FROM Session WHERE sid = ?", [session.id], (error, result) => {
-        if (error) throw error;
-        else {
-            if (result) {
-                let sess = JSON.parse(result.sess)
-                if (sess.isAuth) {
-                    console.log(this);
-                    authenticated = true;
-                    dbQueryFinished = true;
-                } 
-                console.log(`Finished with db request.`);
-            }
-        }
-    })
+function checkAuthentication(sessionId) {
+    const row = db.prepare("SELECT * FROM sessions WHERE sid = ?").get(sessionId);
+    if (row) {
+        let sess = JSON.parse(row.sess);
+        if (sess.isAuth) return true;
+    } 
+    return false;
 }
 
 function removeOldSessions() {
-    db.all("SELECT * FROM Session", (error, allSessions) => {
-        if (error) throw error
-        else {
-            for (let i = 0; i < allSessions.length; i++) {
-                let sess = JSON.parse(allSessions[i].sess);
-                let expiry = new Date(sess.cookie.expires);
-                let now = new Date(Date.now());
-                if (now > expiry) {
-                    db.run("DELETE FROM Session WHERE sid = ?", [allSessions[i].sid], (error) => {
-                        if (error) throw error;
-                        else {
-                            console.log(`Deleted session with sid : ${allSessions[i].sid}`);
-                        }
-                    })
-                }
-            }
+    const allSessions = db.prepare("SELECT * FROM sessions").all();
+
+    if (!allSessions) return false;
+
+    for (let i = 0; i < allSessions.length; i++) {
+        let sess = JSON.parse(allSessions[i].sess);
+        let expiry = new Date(sess.cookie.expires);
+        let now = new Date(Date.now());
+        if (now > expiry) {
+            db.prepare("DELETE FROM sessions WHERE sid = ?").run(allSessions[i].id);
         }
-    });
+    }
+
 }
 
 // HANDLER
@@ -70,8 +52,8 @@ app.use(express.urlencoded({
     extended: false
 }));
 app.use(session({
-    store: new SQLiteStore({
-        db: "storage/database.db",
+    store: new sqliteStore({
+        client: db,
         table: "Session"
     }),
     saveUninitialized: false,
@@ -115,7 +97,9 @@ app.get("/all-reviews", (req, res) => {
 })
 
 app.get("/add-reviews", (req, res) => {
-    if (checkAuthentication(req.session) === false) {
+    console.log(`checkAuthentication : `);
+    console.log(checkAuthentication(req.sessionID));
+    if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -124,7 +108,7 @@ app.get("/add-reviews", (req, res) => {
 })
 
 app.get("/edit-reviews", (req, res) => {
-    if (checkAuthentication(req.session) === false) {
+    if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -136,7 +120,7 @@ app.get("/edit-reviews", (req, res) => {
 })
 
 app.get("/delete-reviews", (req, res) => {
-    if (checkAuthentication(req.session) === false) {
+    if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied")
         return;
     };
@@ -157,36 +141,29 @@ app.get("/login", (req, res) => {
 
 
 // Add counter to user to lock account, so you can't have infinite login attempts to account.
-app.post("/login", (req, res) => {
-    db.get("SELECT * FROM USER WHERE Email = ?", [req.body.Email], async (error, user) => {
-        if (error) throw error;
-        else {
-            if (user) {
-                const isMatch = await bcrypt.compare(req.body.Password, user.Password);
-                if (isMatch) {
-                    req.session.isAuth = true;
-                    console.log(`succesfully logged in!`);
-                }
-            }
+app.post("/login", async (req, res) => {
+    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(req.body.email);
+    if (user) {
+        const isMatch = await bcrypt.compare(req.body.password, user.password);
+        if (isMatch) {
+            req.session.isAuth = true;
+            console.log(`succesfully logged in!`);
             res.redirect("./")
         }
-    })
+    }
+    
 })
 
 app.post("/delete-review", (req, res) => {
-    if (checkAuthentication(req.session) == false) {
+    if (checkAuthentication(req.sessionID) == false) {
         res.redirect("/access-denied");
         return;
     }
-
     for (let i = 0; i < allRestaurants.length; i++) {
-        if (allRestaurants[i].Id == req.body.Id) {
-            db.run(`DELETE FROM Restaurant WHERE Id = ?`, [req.body.Id], (error) => {
-                if (error) throw error;
-                else {
-                    console.log(`Deleted row with Id : ${req.body.Id} and Name : ${req.body.Name}`);
-                }
-            })
+        if (allRestaurants[i].id == req.body.id) {
+            console.log(`found him! with name: ${req.body.name} and id : ${req.body.id}`);
+            let info = db.prepare("DELETE FROM restaurants WHERE id = ?").run(req.body.id)
+            console.log(info.changes);
         }
     }
 
@@ -195,20 +172,16 @@ app.post("/delete-review", (req, res) => {
 })
 
 app.post("/update-review", (req, res) => {
-    if (checkAuthentication(req.session) == false) {
+    if (checkAuthentication(req.sessionID) == false) {
         res.redirect("/access-denied");
         return;
     }
 
     for (let i = 0; i < allRestaurants.length; i++) {
-        if (allRestaurants[i].Id == req.body.Id) {
-            console.log(`updating review for ${req.body.Name}`);
-            db.run(`UPDATE Restaurant SET Name = ?, Score = ?, Review = ?, City = ?, Address = ?, ImageLink = ? WHERE Id = ?`, [req.body.Name, req.body.Score, req.body.Review, req.body.City, req.body.Address, req.body.ImageLink, req.body.Id], (error) => {
-                if (error) throw error;
-                else {
-                    console.log(`Updated row with Id : ${req.body.Id} and Name : ${req.body.Name}`);
-                }
-            })
+        if (allRestaurants[i].Id == req.body.id) {
+            console.log(`updating review for ${req.body.name}`);
+            db.prepare("UPDATE restaurants SET name = ?, score = ?, review = ?, city ?, address = ?, imageLink = ? WHERE id = ?")
+                .run(req.body.name, req.body.score, req.body.review, req.body.city, req.body.address, req.body.imageLink, req.body.id);
         }
     }
 
@@ -217,12 +190,12 @@ app.post("/update-review", (req, res) => {
 })
 
 app.post("/add-review", (req, res) => {
-    if (checkAuthentication(req.session) == false) {
+    if (checkAuthentication(req.sessionID) == false) {
         res.redirect("/access-denied");
         return; 
     }
 
-    db.run(`INSERT INTO Restaurant (Name, Score, Review, ImageLink, City, Address) VALUES (?, ?, ?, ?, ?, ?) `, [req.body.Name, req.body.Score, req.body.Review, req.body.ImageLink, req.body.City, req.body.Address], (error) => {
+    db.run(`INSERT INTO Restaurant (Name, Score, Review, ImageLink, City, Address) VALUES (?, ?, ?, ?, ?, ?) `, [req.body.name, req.body.score, req.body.review, req.body.imageLink, req.body.city, req.body.address], (error) => {
         if (error) throw error;
         else {
             console.log(`Successfully inserted a row into Restaurant!`);
@@ -236,6 +209,7 @@ app.post("/add-review", (req, res) => {
 
 app.listen(port, () => {
     console.log("listening on port " + port)
+    removeOldSessions();
     setInterval(removeOldSessions, threeHoursInMilliseconds);
     updateAllRestaurants();
 });

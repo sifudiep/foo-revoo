@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^7.4.3",
+    "better-sqlite3-session-store": "0.0.2",
     "connect-sqlite3": "^0.9.12",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.3",
