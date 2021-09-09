@@ -122,8 +122,6 @@ app.get("/all-reviews", (req, res) => {
 })
 
 app.get("/add-reviews", (req, res) => {
-    console.log(`checkAuthentication : `);
-    console.log(checkAuthentication(req.sessionID));
     if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
@@ -172,11 +170,16 @@ app.post("/login", async (req, res) => {
     const user = db.prepare("SELECT * FROM users WHERE email = ?").get(req.body.email);
     if (user) {
         const isMatch = await bcrypt.compare(req.body.password, user.password);
-        if (isMatch) {
+        if (isMatch && parseInt(user.loginAttempts) < 10) {
             req.session.isAuth = true;
-            console.log(`succesfully logged in!`);
+            db.prepare("UPDATE users SET loginAttempts = 0").run();
             res.redirect("./")
+        } else {
+            db.prepare("UPDATE users set loginAttempts = ?").run(user.loginAttempts + 1)
+            res.render("login.hbs", {csrfToken: req.csrfToken(), errorMessage: "Incorrect password..."})
         }
+    } else {
+        res.render("login.hbs", {csrfToken: req.csrfToken(), errorMessage: "Email does not exist..."})
     }
     
 })
@@ -224,6 +227,12 @@ app.post("/add-review", (req, res) => {
     updateAllRestaurants();
     res.redirect("add-reviews");
 });
+
+app.use((req, res, next) => {
+    const error = new Error('Not found')
+    res.status(404);
+    next(error);
+})
 
 app.listen(port, () => {
     console.log("listening on port " + port)
