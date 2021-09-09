@@ -4,6 +4,8 @@ const expressHandlebars = require("express-handlebars");
 const app = express();
 
 const session = require("express-session");
+const csrf = require('csurf')
+const csrfProtection = csrf();
 const sqliteStore = require("better-sqlite3-session-store")(session);
 
 const db = require("better-sqlite3")('storage/database.db', {
@@ -62,6 +64,7 @@ app.use(session({
         maxAge: threeHoursInMilliseconds
     }
 }))
+app.use(csrfProtection);
 
 
 app.engine('hbs', expressHandlebars({
@@ -126,7 +129,7 @@ app.get("/add-reviews", (req, res) => {
         return;
     }
 
-    res.render("add-reviews.hbs")
+    res.render("add-reviews.hbs",{csrfToken: req.csrfToken()})
 })
 
 app.get("/edit-reviews", (req, res) => {
@@ -137,7 +140,8 @@ app.get("/edit-reviews", (req, res) => {
 
     updateAllRestaurants();
     res.render("edit-reviews.hbs", {
-        allRestaurants
+        allRestaurants,
+        csrfToken: req.csrfToken()
     })
 })
 
@@ -149,7 +153,8 @@ app.get("/delete-reviews", (req, res) => {
 
     updateAllRestaurants();
     res.render("delete-reviews.hbs", {
-        allRestaurants
+        allRestaurants,
+        csrfToken: req.csrfToken()
     });
 })
 
@@ -158,7 +163,7 @@ app.get("/access-denied", (req, res) => {
 })
 
 app.get("/login", (req, res) => {
-    res.render("login.hbs", {});
+    res.render("login.hbs", {csrfToken: req.csrfToken()});
 })
 
 

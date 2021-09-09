@@ -2,6 +2,7 @@
 
 {{#each allRestaurants}}
     <form class="columns review-editor" method="post" action="delete-review">
+        <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
         <label class="form-label col-1" style="background-color: white; text-align:center" name="id">
             {{this.id}}
             <input type="hidden" name="id" value="{{this.id}}">
