@@ -1,7 +1,8 @@
 ************************************************************************************
-1. Add logout button when logged in.
-2. Change startpage to All Reviews.
+1. Add logout button when logged in. ????
+-. Change startpage to All Reviews.
 3. Add search tool to All Reviews.
 4. Add register/edit/delete admins from website.
-5. Add login fail & login x attempts per account.
+-. Add login fail & login x attempts per account.
 6. Add upload image functionality to admin.
+-. Fix routing so that routes that doesnt exist i.e /DKALDMNTdkd shows error-404.hbs

@@ -1,0 +1,11 @@
+<h1 class="text-primary">Register an admin account!</h1>
+<form action="/register-admin" method="post" class="form-group columns review-editor">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <label for="email" class="form-label text-primary col-2 col-lg-4"><h4>Email:</h4></label>
+    <input type="text" class="form-input col-10 col-lg-8" name="email" type="email" placeholder="Email" required="required" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,14}$">
+
+    <label for="password" class="form-label text-primary col-2 col-lg-4"><h4>Password</h4></label>
+    <input class="form-input col-10 col-lg-8" type="password" placeholder="Password" required="required" name="password"
+        pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}">
+    <input class="btn btn-primary input-group-btn" type="submit" value="Login">
+</form>

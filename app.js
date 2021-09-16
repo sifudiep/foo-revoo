@@ -66,6 +66,7 @@ app.use(session({
 }))
 app.use(csrfProtection);
 
+app.set('view engine', 'hbs')
 
 app.engine('hbs', expressHandlebars({
     extname: ".hbs",
@@ -75,7 +76,7 @@ app.engine('hbs', expressHandlebars({
 app.use(express.static("public"))
 
 app.get("/", (req, res) => {
-    res.render("home.hbs", {})
+    res.redirect("/all-reviews?page=1")
 })
 
 app.get("/about", (req, res) => {
@@ -145,7 +146,7 @@ app.get("/edit-reviews", (req, res) => {
 
 app.get("/delete-reviews", (req, res) => {
     if (checkAuthentication(req.sessionID) === false) {
-        res.redirect("/access-denied")
+        res.redirect("/access-denied");
         return;
     };
 
@@ -157,11 +158,25 @@ app.get("/delete-reviews", (req, res) => {
 })
 
 app.get("/access-denied", (req, res) => {
-    res.render("access-denied.hbs")
+    res.render("access-denied.hbs");
 })
 
 app.get("/login", (req, res) => {
     res.render("login.hbs", {csrfToken: req.csrfToken()});
+})
+
+app.post("register-admin", (req,res) => {
+    console.log(`trying to POST register admin `);
+})
+
+app.get("/register-admin", (req, res) => {
+    console.log(`trying to get register admin`);
+    if (checkAuthentication(req.sessionID) === false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    res.render("register-admin.hbs", {csrfToken: req.csrfToken()})
 })
 
 
@@ -181,7 +196,6 @@ app.post("/login", async (req, res) => {
     } else {
         res.render("login.hbs", {csrfToken: req.csrfToken(), errorMessage: "Email does not exist..."})
     }
-    
 })
 
 app.post("/delete-review", (req, res) => {
@@ -228,10 +242,10 @@ app.post("/add-review", (req, res) => {
     res.redirect("add-reviews");
 });
 
-app.use((req, res, next) => {
-    const error = new Error('Not found')
-    res.status(404);
-    next(error);
+
+
+app.use((req, res) => {
+    res.render("error-404")
 })
 
 app.listen(port, () => {
