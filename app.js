@@ -165,12 +165,20 @@ app.get("/login", (req, res) => {
     res.render("login.hbs", {csrfToken: req.csrfToken()});
 })
 
-app.post("register-admin", (req,res) => {
-    console.log(`trying to POST register admin `);
+app.post("/register-admin", async (req,res) => {
+    if (checkAuthentication(req.sessionID) === false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    let salt = await bcrypt.genSalt(10);
+    let hash = await bcrypt.hash(req.body.password, salt);
+
+    db.prepare("INSERT INTO users (email, password, loginAttempts, isOwner) VALUES (?, ?, ?, ?)").run(req.body.email, hash, 0, 0);
+    res.render("register-admin.hbs", {csrfToken: req.csrfToken()})
 })
 
 app.get("/register-admin", (req, res) => {
-    console.log(`trying to get register admin`);
     if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
