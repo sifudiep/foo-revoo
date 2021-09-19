@@ -7,24 +7,12 @@
             {{this.id}}
             <input type="hidden" name="id" value="{{this.id}}">
         </label>
-        <input class="form-input col-3" type="text" name="name" placeholder="Name" pattern="[A-Za-z0-9.\s!%&/?]{2,}" value="{{this.name}}">
-        <input class="form-input col-2" type="text" name="city" placeholder="City" value="{{this.city}}">
-        <input class="form-input col-3" type="text" name="address" placeholder="Address" value="{{this.address}}">
-        <select name="Score" class="form-select form-lg select-sm col-3">
-            <option value="{{this.score}}">{{this.score}}</option>
-            <option value="10">10</option> 
-            <option value="9">9</option>
-            <option value="8">8</option>
-            <option value="7">7</option>
-            <option value="6">6</option>
-            <option value="5">5</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="2">2</option>
-            <option value="1">1</option>
-        </select>
-        <input class="form-input col-12" type="text" name="review" placeholder="Review" value="{{this.review}}">
-        <input class="form-input col-9" type="text" name="imageLink" placeholder="ImageLink" value="{{this.imageLink}}">
+        <label for="name" class="form-input col-3">{{this.name}}</label>
+        <label for="city" class="form-input col-2">{{this.city}}</label>
+        <label for="address" class="form-input col-3">{{this.address}}</label>
+        <label for="score" class="form-input col-3">{{this.score}}</label>
+        <label for="review" class="form-input col-12">{{this.review}}</label>   
+        <label for="imageLink" class="form-input col-9">{{this.imageLink}}</label>
         <input type="submit" class="btn btn-error col-3" value="Delete">
     </form>
 {{/each}}
