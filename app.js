@@ -16,7 +16,7 @@ const db = require("better-sqlite3")('storage/database.db', {
 // Name, Score, Review, Location, ImageLink
 
 let allRestaurants;
-let allUsers;
+let allAdmins;
 const port = 3000;
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
 const loginAttemptsLimit = 5;
@@ -28,17 +28,17 @@ function updateAllRestaurants() {
 // MAKE FIND RESTAURANT FUNCTION
 
 function findUser(id) {
-    for (let i = 0; i < allUsers.length; i++) {
-        if (allUsers[i].id == id) {
-            return allUsers[i];
+    for (let i = 0; i < allAdmins.length; i++) {
+        if (allAdmins[i].id == id) {
+            return allAdmins[i];
         } 
     }
 
     throw Error;
 }
 
-function updateAllUsers() {
-    allUsers = db.prepare("SELECT * FROM users").all();
+function updateAlladmins() {
+    allAdmins = db.prepare("SELECT * FROM admins").all();
 }
 
 // Checks authentication from database instead of req.session, should be better for memory leaks?
@@ -198,7 +198,7 @@ app.get("/edit-admins", (req, res) => {
         return;
     }
 
-    res.render("edit-admins.hbs", {allUsers, csrfToken: req.csrfToken()});
+    res.render("edit-admins.hbs", {alladmins: allAdmins, csrfToken: req.csrfToken()});
 })
 
 app.post("/edit-admins", (req, res) => {
@@ -216,10 +216,10 @@ app.post("/edit-admins", (req, res) => {
     console.log(`update button :`);
     console.log(req.body);
 
-    db.prepare("UPDATE users SET email = ?, password = ?, loginAttempts = ? WHERE id = ?").run(req.body.email, targetUser.password, req.body.loginAttempts, req.body.id);
-    updateAllUsers();
+    db.prepare("UPDATE admins SET email = ?, password = ?, loginAttempts = ? WHERE id = ?").run(req.body.email, targetUser.password, req.body.loginAttempts, req.body.id);
+    updateAlladmins();
 
-    res.render("edit-admins.hbs", {allUsers, csrfToken: req.csrfToken()});
+    res.render("edit-admins.hbs", {alladmins: allAdmins, csrfToken: req.csrfToken()});
 })
 
 app.post("/register-admin", async (req,res) => {
@@ -231,8 +231,8 @@ app.post("/register-admin", async (req,res) => {
     let salt = await bcrypt.genSalt(10);
     let hash = await bcrypt.hash(req.body.password, salt);
 
-    db.prepare("INSERT INTO users (email, password, loginAttempts, isOwner) VALUES (?, ?, ?, ?)").run(req.body.email, hash, 0, 0);
-    updateAllUsers();
+    db.prepare("INSERT INTO admins (email, password, loginAttempts, isOwner) VALUES (?, ?, ?, ?)").run(req.body.email, hash, 0, 0);
+    updateAlladmins();
     res.render("register-admin.hbs", {csrfToken: req.csrfToken()})
 })
 
@@ -240,15 +240,15 @@ app.post("/register-admin", async (req,res) => {
 
 // Add counter to user to lock account, so you can't have infinite login attempts to account.
 app.post("/login", async (req, res) => {
-    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(req.body.email);
+    const user = db.prepare("SELECT * FROM admins WHERE email = ?").get(req.body.email);
     if (user) {
         const isMatch = await bcrypt.compare(req.body.password, user.password);
         if (isMatch && parseInt(user.loginAttempts) < loginAttemptsLimit) {
             req.session.isAuth = true;
-            db.prepare("UPDATE users SET loginAttempts = 0").run();
+            db.prepare("UPDATE admins SET loginAttempts = 0").run();
             res.redirect("./")
         } else {
-            db.prepare("UPDATE users set loginAttempts = ?").run(user.loginAttempts + 1)
+            db.prepare("UPDATE admins set loginAttempts = ?").run(user.loginAttempts + 1)
             res.render("login.hbs", {csrfToken: req.csrfToken(), errorMessage: "Incorrect password..."})
         }
     } else {
@@ -311,6 +311,6 @@ app.listen(port, () => {
     removeOldSessions();
     setInterval(removeOldSessions, threeHoursInMilliseconds);
     updateAllRestaurants();
-    updateAllUsers();
+    updateAlladmins();
 });
 
