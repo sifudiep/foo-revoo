@@ -1,5 +1,5 @@
 {{#each allAdmins}}
-    <form class="columns review-editor" method="post" action="update-admin">
+    <form class="columns review-editor" method="post" action="update-admins">
         <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
         <label for="id" class="form-label col-1" style="background-color: white; text-align:center" name="id">
             {{this.id}}
@@ -16,7 +16,7 @@
             <option value="0">0</option>
         </select>
         <input type="text" class="form-input col-9" name="password" placeholder="Password" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}" value="{{this.password}}" required="required">
-        <input type="submit" class="btn btn-success col-3" value="Update" name="update">
+        <input type="submit" class="btn btn-success col-3" value="Update">
     </form>
 {{/each}}
 

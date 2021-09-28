@@ -1,18 +1,15 @@
 <h3>All Admins count : {{allAdmins.length}}</h3>
 
-{{#each allRestaurants}}
-    <form class="columns review-editor" method="post" action="delete-admin">
+{{#each allAdmins}}
+    <form class="columns review-editor" method="post" action="delete-admins">
         <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
         <label for="id" class="form-label col-1" style="background-color: white; text-align:center" name="id">
             {{this.id}}
             <input type="hidden" name="id" value="{{this.id}}">
         </label>
-        <label for="name" class="form-input col-3">{{this.name}}</label>
-        <label for="city" class="form-input col-2">{{this.city}}</label>
-        <label for="address" class="form-input col-3">{{this.address}}</label>
-        <label for="score" class="form-input col-3">{{this.score}}</label>
-        <label for="review" class="form-input col-12">{{this.review}}</label>   
-        <label for="imageLink" class="form-input col-9">{{this.imageLink}}</label>
+        <label for="email" class="form-input col-8">{{this.email}}</label>
+        <label for="loginAttempts" class="form-input col-3">{{this.loginAttempts}}</label>
+        <label for="password" class="form-input col-9">{{this.password}}</label>        
         <input type="submit" class="btn btn-error col-3" value="Delete">
     </form>
 {{/each}}

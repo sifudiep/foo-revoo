@@ -200,9 +200,30 @@ app.get("/update-admins", (req, res) => {
     res.render("update-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
 })
 
-app.get("/")
+app.get("/delete-admins", (req, res) => {
+    if (checkAuthentication(req.sessionID) === false) {
+        res.redirect("/access-denied");
+        return;
+    }
 
-app.post("/update-admin", (req, res) => {
+    res.render("delete-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
+})
+
+app.post("/delete-admins", (req, res) => {
+    if (checkAuthentication(req.sessionID) === false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    if (findUser(req.body.id))
+        db.prepare("DELETE FROM admins WHERE id = ?").run(req.body.id)
+
+    updateAllAdmins();
+    
+    res.render("delete-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
+})
+
+app.post("/update-admins", (req, res) => {
     if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
@@ -213,9 +234,6 @@ app.post("/update-admin", (req, res) => {
     if (targetUser.password !== req.body.password) {
         targetUser.password = req.body.password;
     }
-
-    console.log(`update button :`);
-    console.log(req.body);
 
     db.prepare("UPDATE admins SET email = ?, password = ?, loginAttempts = ? WHERE id = ?").run(req.body.email, targetUser.password, req.body.loginAttempts, req.body.id);
     updateAllAdmins();
@@ -257,7 +275,7 @@ app.post("/login", async (req, res) => {
     }
 })
 
-app.post("/delete-review", (req, res) => {
+app.post("/delete-reviews", (req, res) => {
     if (checkAuthentication(req.sessionID) == false) {
         res.redirect("/access-denied");
         return;
@@ -272,7 +290,7 @@ app.post("/delete-review", (req, res) => {
     res.redirect("delete-reviews")
 })
 
-app.post("/update-review", (req, res) => {
+app.post("/update-reviews", (req, res) => {
     if (checkAuthentication(req.sessionID) == false) {
         res.redirect("/access-denied");
         return;
@@ -290,7 +308,7 @@ app.post("/update-review", (req, res) => {
     res.redirect("update-reviews");
 })
 
-app.post("/add-review", (req, res) => {
+app.post("/add-reviews", (req, res) => {
     if (checkAuthentication(req.sessionID) == false) {
         res.redirect("/access-denied");
         return; 
