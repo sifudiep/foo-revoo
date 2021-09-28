@@ -42,7 +42,7 @@ function updateAllAdmins() {
 }
 
 // Checks authentication from database instead of req.session, should be better for memory leaks?
-function checkAuthentication(sessionId) {
+function authenticateUserIsAdmin(sessionId) {
     const row = db.prepare("SELECT * FROM sessions WHERE sid = ?").get(sessionId);
     if (row) {
         let sess = JSON.parse(row.sess);
@@ -50,6 +50,17 @@ function checkAuthentication(sessionId) {
     } 
     return false;
 }
+
+function authenticateUserIsOwner(sessionId) {
+    const row = db.prepare("SELECT * FROM sessions WHERE sid = ?").get(sessionId);
+    if (row) {
+        let sess = JSON.parse(row.sess);
+        if (sess.isOwner) return true;
+    } 
+    return false;
+}
+
+
 
 function removeOldSessions() {
     const allSessions = db.prepare("SELECT * FROM sessions").all();
@@ -141,7 +152,7 @@ app.get("/all-reviews", (req, res) => {
 })
 
 app.get("/add-reviews", (req, res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+    if (authenticateUserIsAdmin(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -150,7 +161,7 @@ app.get("/add-reviews", (req, res) => {
 })
 
 app.get("/update-reviews", (req, res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+    if (authenticateUserIsAdmin(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -163,10 +174,12 @@ app.get("/update-reviews", (req, res) => {
 })
 
 app.get("/delete-reviews", (req, res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+    if (authenticateUserIsAdmin(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     };
+
+    authenticateUserIsOwner(req.sessionID);
 
     updateAllRestaurants();
     res.render("delete-reviews.hbs", {
@@ -184,7 +197,7 @@ app.get("/login", (req, res) => {
 })
 
 app.get("/register-admin", (req, res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+    if (authenticateUserIsOwner(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -193,7 +206,7 @@ app.get("/register-admin", (req, res) => {
 })
 
 app.get("/update-admins", (req, res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+    if (authenticateUserIsOwner(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -201,7 +214,7 @@ app.get("/update-admins", (req, res) => {
 })
 
 app.get("/delete-admins", (req, res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+    if (authenticateUserIsOwner(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -210,7 +223,7 @@ app.get("/delete-admins", (req, res) => {
 })
 
 app.post("/delete-admins", (req, res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+    if (authenticateUserIsOwner(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -219,12 +232,12 @@ app.post("/delete-admins", (req, res) => {
         db.prepare("DELETE FROM admins WHERE id = ?").run(req.body.id)
 
     updateAllAdmins();
-    
+
     res.render("delete-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
 })
 
-app.post("/update-admins", (req, res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+app.post("/update-admins", async(req, res) => {
+    if (authenticateUserIsOwner(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -232,7 +245,9 @@ app.post("/update-admins", (req, res) => {
     let targetUser = findUser(req.body.id);
 
     if (targetUser.password !== req.body.password) {
-        targetUser.password = req.body.password;
+        let salt = await bcrypt.genSalt(10);
+        let hash = await bcrypt.hash(req.body.password, salt);
+        targetUser.password = hash;
     }
 
     db.prepare("UPDATE admins SET email = ?, password = ?, loginAttempts = ? WHERE id = ?").run(req.body.email, targetUser.password, req.body.loginAttempts, req.body.id);
@@ -242,7 +257,7 @@ app.post("/update-admins", (req, res) => {
 })
 
 app.post("/register-admin", async (req,res) => {
-    if (checkAuthentication(req.sessionID) === false) {
+    if (authenticateUserIsOwner(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
@@ -264,6 +279,11 @@ app.post("/login", async (req, res) => {
         const isMatch = await bcrypt.compare(req.body.password, user.password);
         if (isMatch && parseInt(user.loginAttempts) < loginAttemptsLimit) {
             req.session.isAuth = true;
+            if (user.isOwner === 1) {
+                req.session.isOwner = true;
+            } else {
+                req.session.isOwner = false;
+            }
             db.prepare("UPDATE admins SET loginAttempts = 0").run();
             res.redirect("./")
         } else {
@@ -276,7 +296,7 @@ app.post("/login", async (req, res) => {
 })
 
 app.post("/delete-reviews", (req, res) => {
-    if (checkAuthentication(req.sessionID) == false) {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
         res.redirect("/access-denied");
         return;
     }
@@ -291,7 +311,7 @@ app.post("/delete-reviews", (req, res) => {
 })
 
 app.post("/update-reviews", (req, res) => {
-    if (checkAuthentication(req.sessionID) == false) {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
         res.redirect("/access-denied");
         return;
     }
@@ -309,7 +329,7 @@ app.post("/update-reviews", (req, res) => {
 })
 
 app.post("/add-reviews", (req, res) => {
-    if (checkAuthentication(req.sessionID) == false) {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
         res.redirect("/access-denied");
         return; 
     }
