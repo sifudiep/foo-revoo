@@ -146,6 +146,10 @@ app.get("/all-reviews", (req, res) => {
     let startIndex = endIndex - restaurantsPerPage;
     
     let restaurantsInPage = allRestaurants.slice(startIndex, endIndex);
+    
+    restaurantsInPage.forEach(element => {
+        element.cityName = findCity(element.cityId).name;
+    });
 
     // Basically rounds up, i.e 13/4 = 3.25 => 4
     if (lastPage % 1 != 0) {
@@ -338,8 +342,8 @@ app.post("/update-reviews", (req, res) => {
     for (let i = 0; i < allRestaurants.length; i++) {
         if (allRestaurants[i].id == req.body.id) {
             if (req.body.name !== allRestaurants[i].name) db.prepare("UPDATE restaurants SET name = ? WHERE id = ?").run(req.body.name, req.body.id);
-            db.prepare("UPDATE restaurants SET score = ?, review = ?, city = ?, address = ?, imageLink = ? WHERE id = ?")
-                .run(req.body.score, req.body.review, req.body.city, req.body.address, req.body.imageLink, req.body.id);
+            db.prepare("UPDATE restaurants SET score = ?, review = ?, cityId = ?, address = ?, imageLink = ? WHERE id = ?")
+                .run(req.body.score, req.body.review, req.body.cityId, req.body.address, req.body.imageLink, req.body.id);
         }
     }
 
@@ -352,7 +356,7 @@ app.post("/add-reviews", (req, res) => {
         res.redirect("/access-denied");
         return; 
     }
-    db.prepare("INSERT INTO restaurants (name, score, review, imageLink, city, address) VALUES (?, ?, ?, ?, ?, ?)").run(req.body.name, req.body.score, req.body.review, req.body.imageLink, req.body.city, req.body.address);
+    db.prepare("INSERT INTO restaurants (name, score, review, imageLink, cityId, address) VALUES (?, ?, ?, ?, ?, ?)").run(req.body.name, req.body.score, req.body.review, req.body.imageLink, req.body.cityId, req.body.address);
 
     updateAllRestaurants();
     res.redirect("add-reviews");

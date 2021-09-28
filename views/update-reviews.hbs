@@ -7,7 +7,7 @@
             <input type="hidden" name="id" value="{{this.id}}">
         </label>
         <input class="form-input col-3" type="text" name="name" placeholder="Name" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" value="{{this.name}}" required="required">
-        <select name="city" class="form-select select-sm col-3">
+        <select name="cityId" class="form-select select-sm col-3">
             <option value="{{this.cityId}}">{{this.cityId}}</option>
             {{#each @root.allCities}}
                 <option value="{{this.id}}">{{this.name}}</option>

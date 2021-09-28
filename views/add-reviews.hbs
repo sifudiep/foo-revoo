@@ -20,8 +20,8 @@
     <label for="review" class="form-label">Review: </label>
     <input class="form-input" type="text" name="review" placeholder="Review" required="required">
 
-    <label for="city" class="form-label">City: </label>
-    <select name="city" class="form-select select-sm">
+    <label for="cityId" class="form-label">City: </label>
+    <select name="cityId" class="form-select select-sm">
         {{#each allCities}}
             <option value="{{this.id}}">{{this.name}}</option>
         {{/each}}
