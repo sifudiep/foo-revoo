@@ -1,5 +1,5 @@
-{{#each allUsers}}
-    <form class="columns review-editor" method="post" action="edit-admins">
+{{#each allAdmins}}
+    <form class="columns review-editor" method="post" action="update-admin">
         <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
         <label for="id" class="form-label col-1" style="background-color: white; text-align:center" name="id">
             {{this.id}}

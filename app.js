@@ -37,7 +37,7 @@ function findUser(id) {
     throw Error;
 }
 
-function updateAlladmins() {
+function updateAllAdmins() {
     allAdmins = db.prepare("SELECT * FROM admins").all();
 }
 
@@ -54,7 +54,7 @@ function checkAuthentication(sessionId) {
 function removeOldSessions() {
     const allSessions = db.prepare("SELECT * FROM sessions").all();
 
-    if (!allSessions) return false;
+    if (!allSessions) return;
 
     for (let i = 0; i < allSessions.length; i++) {
         let sess = JSON.parse(allSessions[i].sess);
@@ -149,14 +149,14 @@ app.get("/add-reviews", (req, res) => {
     res.render("add-reviews.hbs",{csrfToken: req.csrfToken()})
 })
 
-app.get("/edit-reviews", (req, res) => {
+app.get("/update-reviews", (req, res) => {
     if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
 
     updateAllRestaurants();
-    res.render("edit-reviews.hbs", {
+    res.render("update-reviews.hbs", {
         allRestaurants,
         csrfToken: req.csrfToken()
     })
@@ -192,16 +192,17 @@ app.get("/register-admin", (req, res) => {
     res.render("register-admin.hbs", {csrfToken: req.csrfToken()})
 })
 
-app.get("/edit-admins", (req, res) => {
+app.get("/update-admins", (req, res) => {
     if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     }
-
-    res.render("edit-admins.hbs", {alladmins: allAdmins, csrfToken: req.csrfToken()});
+    res.render("update-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
 })
 
-app.post("/edit-admins", (req, res) => {
+app.get("/")
+
+app.post("/update-admin", (req, res) => {
     if (checkAuthentication(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
@@ -217,9 +218,9 @@ app.post("/edit-admins", (req, res) => {
     console.log(req.body);
 
     db.prepare("UPDATE admins SET email = ?, password = ?, loginAttempts = ? WHERE id = ?").run(req.body.email, targetUser.password, req.body.loginAttempts, req.body.id);
-    updateAlladmins();
+    updateAllAdmins();
 
-    res.render("edit-admins.hbs", {alladmins: allAdmins, csrfToken: req.csrfToken()});
+    res.render("update-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
 })
 
 app.post("/register-admin", async (req,res) => {
@@ -232,7 +233,7 @@ app.post("/register-admin", async (req,res) => {
     let hash = await bcrypt.hash(req.body.password, salt);
 
     db.prepare("INSERT INTO admins (email, password, loginAttempts, isOwner) VALUES (?, ?, ?, ?)").run(req.body.email, hash, 0, 0);
-    updateAlladmins();
+    updateAllAdmins();
     res.render("register-admin.hbs", {csrfToken: req.csrfToken()})
 })
 
@@ -286,7 +287,7 @@ app.post("/update-review", (req, res) => {
     }
 
     updateAllRestaurants();
-    res.redirect("edit-reviews");
+    res.redirect("update-reviews");
 })
 
 app.post("/add-review", (req, res) => {
@@ -311,6 +312,6 @@ app.listen(port, () => {
     removeOldSessions();
     setInterval(removeOldSessions, threeHoursInMilliseconds);
     updateAllRestaurants();
-    updateAlladmins();
+    updateAllAdmins();
 });
 
