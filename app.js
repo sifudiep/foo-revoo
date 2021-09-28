@@ -17,6 +17,7 @@ const db = require("better-sqlite3")('storage/database.db', {
 
 let allRestaurants;
 let allAdmins;
+let allCities; 
 const port = 3000;
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
 const loginAttemptsLimit = 5;
@@ -25,7 +26,13 @@ function updateAllRestaurants() {
     allRestaurants = db.prepare("SELECT * FROM restaurants").all();
 }
 
-// MAKE FIND RESTAURANT FUNCTION
+function updateAllCities() {
+    allCities = db.prepare("SELECT * FROM cities").all();
+}
+
+function updateAllAdmins() {
+    allAdmins = db.prepare("SELECT * FROM admins").all();
+}
 
 function findUser(id) {
     for (let i = 0; i < allAdmins.length; i++) {
@@ -37,8 +44,14 @@ function findUser(id) {
     throw Error;
 }
 
-function updateAllAdmins() {
-    allAdmins = db.prepare("SELECT * FROM admins").all();
+function findCity(id) {
+    for (let i = 0; i < allCities.length; i++) {
+        if (allCities[i].id == id) {
+            return allCities[i];
+        } 
+    }
+    
+    throw Error;
 }
 
 // Checks authentication from database instead of req.session, should be better for memory leaks?
@@ -157,7 +170,7 @@ app.get("/add-reviews", (req, res) => {
         return;
     }
 
-    res.render("add-reviews.hbs",{csrfToken: req.csrfToken()})
+    res.render("add-reviews.hbs",{allCities, csrfToken: req.csrfToken()})
 })
 
 app.get("/update-reviews", (req, res) => {
@@ -167,8 +180,10 @@ app.get("/update-reviews", (req, res) => {
     }
 
     updateAllRestaurants();
+
     res.render("update-reviews.hbs", {
         allRestaurants,
+        allCities,
         csrfToken: req.csrfToken()
     })
 })
@@ -220,6 +235,10 @@ app.get("/delete-admins", (req, res) => {
     }
 
     res.render("delete-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
+})
+
+app.get("/search-reviews", (req, res) => {
+    res.render("search-reviews.hbs", {allRestaurants, csrf: req.csrfToken()});
 })
 
 app.post("/delete-admins", (req, res) => {
@@ -351,5 +370,7 @@ app.listen(port, () => {
     setInterval(removeOldSessions, threeHoursInMilliseconds);
     updateAllRestaurants();
     updateAllAdmins();
+    updateAllCities();
+    console.log(allCities);
 });
 

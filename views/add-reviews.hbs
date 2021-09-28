@@ -21,7 +21,12 @@
     <input class="form-input" type="text" name="review" placeholder="Review" required="required">
 
     <label for="city" class="form-label">City: </label>
-    <input class="form-input" type="text" name="city" placeholder="City" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
+    <select name="city" class="form-select select-sm">
+        {{#each allCities}}
+            <option value="{{this.id}}">{{this.name}}</option>
+        {{/each}}
+    </select>
+
 
     <label for="address" class="form-label">Address: </label>
     <input class="form-input" type="text" name="address" placeholder="Address" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
