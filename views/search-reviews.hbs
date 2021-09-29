@@ -1,34 +1,55 @@
 <h1>Welcome to the search page</h1>
 
-<form action="search-reviews">
-    <label for="name" class="form-label">Restaurant Name: (Leave blank if uncertain about name)</label>
-    <input type="text" class="form-input col-12" name="name" placeholder="Restaurant Name" style="max-width: 700px;">
-    <label for="score" class="form-label">Score Range : (Lowest -> Highest)</label>
-    <select name="score-lowest" class="form-select" style="max-width: 700px;">
-            <option>Lowest score</option>
-            <option value="10">10</option> 
-            <option value="9">9</option>
-            <option value="8">8</option>
-            <option value="7">7</option>
-            <option value="6">6</option>
-            <option value="5">5</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="2">2</option>
-            <option value="1">1</option>
-    </select>
-    <select name="score-highest" class="form-select" style="max-width: 700px;">
-            <option>Highest score</option>
-            <option value="10">10</option> 
-            <option value="9">9</option>
-            <option value="8">8</option>
-            <option value="7">7</option>
-            <option value="6">6</option>
-            <option value="5">5</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="2">2</option>
-            <option value="1">1</option>
-    </select>
-    <label for=""></label>
+<form action="search-reviews" method="post">
+        <input type="hidden" name="_csrf" value="{{@root.csrf}}">
+        <label for="name" class="form-label">Restaurant Name: (Leave blank if uncertain about name)</label>
+        <input type="text" class="form-input col-12" name="name" placeholder="Restaurant Name"
+                style="max-width: 700px;">
+        <label for="score" class="form-label">Score Range : (Lowest -> Highest)</label>
+        <select name="lowestScore" class="form-select" style="max-width: 700px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+        </select>
+        <select name="highestScore" class="form-select" style="max-width: 700px;">
+                <option value="10">10</option>
+                <option value="9">9</option>
+                <option value="8">8</option>
+                <option value="7">7</option>
+                <option value="6">6</option>
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+        </select>
+        <label for="city" class="form-label">City : </label>
+        <select name="cityId" class="form-select" style="max-width: 700px;">
+                <option value="allCities">All Cities</option>
+                {{#each allCities}}
+                <option value="{{this.id}}">{{this.name}}</option>
+                {{/each}}
+        </select>
+
+        <button class="btn btn-primary">Search</button>
 </form>
+
+<br>
+
+{{#each searchedRestaurants}}
+  <div class="restaurant-container">
+    <h1>{{this.name}}</h1>
+    <h4>City : {{this.cityName}}</h4>
+    <h4>Address : {{this.address}}</h4>
+    <h4>Overall score : {{this.score}}/10</h4>
+    <p style="max-width: 900px;">{{this.review}}</p>
+    <img class="restaurant-image" src="{{this.imageLink}}" alt="Image of {{name}}">
+  </div>
+{{/each}}

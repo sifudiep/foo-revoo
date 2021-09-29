@@ -24,6 +24,10 @@ const loginAttemptsLimit = 5;
 
 function updateAllRestaurants() {
     allRestaurants = db.prepare("SELECT * FROM restaurants").all();
+    
+    allRestaurants.forEach(restaurant => {
+        restaurant.cityName = findCity(restaurant.cityId).name;
+    });
 }
 
 function updateAllCities() {
@@ -41,7 +45,7 @@ function findUser(id) {
         } 
     }
 
-    throw Error;
+    throw "User was not found";
 }
 
 function findCity(id) {
@@ -51,7 +55,7 @@ function findCity(id) {
         } 
     }
     
-    throw Error;
+    throw "City was not found";
 }
 
 // Checks authentication from database instead of req.session, should be better for memory leaks?
@@ -146,10 +150,6 @@ app.get("/all-reviews", (req, res) => {
     let startIndex = endIndex - restaurantsPerPage;
     
     let restaurantsInPage = allRestaurants.slice(startIndex, endIndex);
-    
-    restaurantsInPage.forEach(element => {
-        element.cityName = findCity(element.cityId).name;
-    });
 
     // Basically rounds up, i.e 13/4 = 3.25 => 4
     if (lastPage % 1 != 0) {
@@ -242,7 +242,28 @@ app.get("/delete-admins", (req, res) => {
 })
 
 app.get("/search-reviews", (req, res) => {
-    res.render("search-reviews.hbs", {allRestaurants, csrf: req.csrfToken()});
+    res.render("search-reviews.hbs", {allCities, csrf: req.csrfToken()});
+})
+
+app.post("/search-reviews", (req, res) => {
+    updateAllRestaurants();
+    let searchedRestaurants = [];
+    for (let i = 0; i < allRestaurants.length; i++) {
+        if (allRestaurants[i].cityId == req.body.cityId || req.body.cityId == "allCities") {
+            if (allRestaurants[i].score >= req.body.lowestScore && allRestaurants[i].score <= req.body.highestScore) {
+                if (req.body.name == "") {
+                    searchedRestaurants.push(allRestaurants[i]);
+                } else {
+                    let restaurantName = allRestaurants[i].name.toString().toLowerCase();
+                    if (restaurantName.includes(req.body.name.toString().toLowerCase())) {
+                        searchedRestaurants.push(allRestaurants[i]);
+                    }
+                }
+            }
+        }
+    }
+    
+    res.render("search-reviews.hbs", {allCities, csrf: req.csrfToken(), searchedRestaurants})
 })
 
 app.post("/delete-admins", (req, res) => {
@@ -362,19 +383,16 @@ app.post("/add-reviews", (req, res) => {
     res.redirect("add-reviews");
 });
 
-
-
 app.use((req, res) => {
-    res.render("error-404")
+    res.render("error-404.hbs")
 })
 
 app.listen(port, () => {
     console.log("listening on port " + port)
     removeOldSessions();
     setInterval(removeOldSessions, threeHoursInMilliseconds);
+    updateAllCities();
     updateAllRestaurants();
     updateAllAdmins();
-    updateAllCities();
-    console.log(allCities);
 });
 
