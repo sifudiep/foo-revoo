@@ -8,6 +8,27 @@ const csrf = require('csurf')
 const csrfProtection = csrf();
 const sqliteStore = require("better-sqlite3-session-store")(session);
 
+const homeURL = "http://localhost:3000/"
+
+const multer = require("multer");
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './images/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+})
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+}
+const upload = multer({storage, fileFilter});
+app.use(upload.single('restaurantImage'));
+
 const db = require("better-sqlite3")('storage/database.db', {
     fileMustExist: true
 });
@@ -95,7 +116,6 @@ function removeOldSessions() {
 
 }
 
-// HANDLER
 app.use(express.urlencoded({
     extended: false
 }));
@@ -110,6 +130,9 @@ app.use(session({
         maxAge: threeHoursInMilliseconds
     }
 }))
+
+app.use("/images", express.static('images'))
+
 app.use(csrfProtection);
 
 app.set('view engine', 'hbs')
@@ -131,10 +154,6 @@ app.get("/about", (req, res) => {
 
 app.get("/contact", (req, res) => {
     res.render("contact.hbs", {})
-})
-
-app.get("/restaurant-review", (req, res) => {
-    res.render("restaurant-review.hbs")
 })
 
 app.get("/all-reviews", (req, res) => {
@@ -174,7 +193,7 @@ app.get("/add-reviews", (req, res) => {
         return;
     }
 
-    res.render("add-reviews.hbs",{allCities, csrfToken: req.csrfToken()})
+    res.render("add-reviews.hbs", {allCities, csrfToken: req.csrfToken()})
 })
 
 app.get("/update-reviews", (req, res) => {
@@ -192,13 +211,14 @@ app.get("/update-reviews", (req, res) => {
     })
 })
 
+
+
+
 app.get("/delete-reviews", (req, res) => {
     if (authenticateUserIsAdmin(req.sessionID) === false) {
         res.redirect("/access-denied");
         return;
     };
-
-    authenticateUserIsOwner(req.sessionID);
 
     updateAllRestaurants();
     res.render("delete-reviews.hbs", {
@@ -315,8 +335,6 @@ app.post("/register-admin", async (req,res) => {
 })
 
 
-
-// Add counter to user to lock account, so you can't have infinite login attempts to account.
 app.post("/login", async (req, res) => {
     const user = db.prepare("SELECT * FROM admins WHERE email = ?").get(req.body.email);
     if (user) {
@@ -360,11 +378,19 @@ app.post("/update-reviews", (req, res) => {
         return;
     }
 
+    console.log(req.file);
+    console.log(req.body)
+
+    let filePath = req.body.imageLink;
+    if (req.file) {
+        filePath = homeURL + req.file.path;
+    }
+
     for (let i = 0; i < allRestaurants.length; i++) {
         if (allRestaurants[i].id == req.body.id) {
             if (req.body.name !== allRestaurants[i].name) db.prepare("UPDATE restaurants SET name = ? WHERE id = ?").run(req.body.name, req.body.id);
             db.prepare("UPDATE restaurants SET score = ?, review = ?, cityId = ?, address = ?, imageLink = ? WHERE id = ?")
-                .run(req.body.score, req.body.review, req.body.cityId, req.body.address, req.body.imageLink, req.body.id);
+                .run(req.body.score, req.body.review, req.body.cityId, req.body.address, filePath, req.body.id);
         }
     }
 
@@ -377,7 +403,15 @@ app.post("/add-reviews", (req, res) => {
         res.redirect("/access-denied");
         return; 
     }
-    db.prepare("INSERT INTO restaurants (name, score, review, imageLink, cityId, address) VALUES (?, ?, ?, ?, ?, ?)").run(req.body.name, req.body.score, req.body.review, req.body.imageLink, req.body.cityId, req.body.address);
+
+    console.log(req.file);
+    
+    let filePath = '';
+    if (req.file) {
+        filePath = homeURL + req.file.path;
+    }
+    
+    db.prepare("INSERT INTO restaurants (name, score, review, imageLink, cityId, address) VALUES (?, ?, ?, ?, ?, ?)").run(req.body.name, req.body.score, req.body.review, filePath, req.body.cityId, req.body.address);
 
     updateAllRestaurants();
     res.redirect("add-reviews");

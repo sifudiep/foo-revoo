@@ -1,6 +1,6 @@
 <h1>Welcome to the search page</h1>
 
-<form action="search-reviews" method="post">
+<form action="search-reviews" method="post" style="padding-bottom: 15px;">
         <input type="hidden" name="_csrf" value="{{@root.csrf}}">
         <label for="name" class="form-label">Restaurant Name: (Leave blank if uncertain about name)</label>
         <input type="text" class="form-input col-12" name="name" placeholder="Restaurant Name"
@@ -41,15 +41,6 @@
         <button class="btn btn-primary">Search</button>
 </form>
 
-<br>
-
 {{#each searchedRestaurants}}
-  <div class="restaurant-container">
-    <h1>{{this.name}}</h1>
-    <h4>City : {{this.cityName}}</h4>
-    <h4>Address : {{this.address}}</h4>
-    <h4>Overall score : {{this.score}}/10</h4>
-    <p style="max-width: 900px;">{{this.review}}</p>
-    <img class="restaurant-image" src="{{this.imageLink}}" alt="Image of {{name}}">
-  </div>
+        {{> restaurant-review}}
 {{/each}}

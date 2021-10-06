@@ -1,4 +1,4 @@
-<form class="form-group columns" method="post" action="/add-reviews">
+<form class="form-group columns" method="post" action="/add-reviews" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <label class="form-label">Name: </label>
     <input class="form-input" type="text" name="name" placeholder="Name" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
@@ -32,7 +32,6 @@
     <input class="form-input" type="text" name="address" placeholder="Address" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
 
     <label for="imageLink" class="form-label">ImageLink: </label>
-    <input class="form-input" type="text" name="imageLink" placeholder="ImageLink">
-
+    <input class="form-input" type="file" name="restaurantImage" placeholder="ImageLink">
     <input type="submit" class="btn btn-primary col-12" style="margin-top: 10px" value="Add Review">
 </form>
