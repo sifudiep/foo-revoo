@@ -8,7 +8,7 @@ const csrf = require('csurf')
 const csrfProtection = csrf();
 const sqliteStore = require("better-sqlite3-session-store")(session);
 
-const homeURL = "http://localhost:3000/"
+const homeURL = "https://foo-revoo.herokuapp.com/"
 
 const multer = require("multer");
 const storage = multer.diskStorage({
