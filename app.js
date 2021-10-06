@@ -39,7 +39,7 @@ const db = require("better-sqlite3")('storage/database.db', {
 let allRestaurants;
 let allAdmins;
 let allCities; 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
 const loginAttemptsLimit = 5;
 
@@ -378,9 +378,6 @@ app.post("/update-reviews", (req, res) => {
         return;
     }
 
-    console.log(req.file);
-    console.log(req.body)
-
     let filePath = req.body.imageLink;
     if (req.file) {
         filePath = homeURL + req.file.path;
@@ -403,8 +400,6 @@ app.post("/add-reviews", (req, res) => {
         res.redirect("/access-denied");
         return; 
     }
-
-    console.log(req.file);
     
     let filePath = '';
     if (req.file) {
