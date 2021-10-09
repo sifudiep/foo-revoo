@@ -6,14 +6,14 @@
             {{this.id}}
             <input type="hidden" name="id" value="{{this.id}}">
         </label>
-        <input class="form-input col-3" type="text" name="name" placeholder="Name" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" value="{{this.name}}" required="required">
+        <input class="form-input col-3" type="text" name="name" placeholder="Name (Use ATLEAST two letters)" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" value="{{this.name}}" required="required">
         <select name="cityId" class="form-select select-sm col-3">
             <option value="{{this.cityId}}">{{this.cityId}}</option>
             {{#each @root.allCities}}
                 <option value="{{this.id}}">{{this.name}}</option>
             {{/each}}
         </select>
-        <input type="text" placeholder="Address" name="address" pattern="[A-Za-z0-9ÄÖÅäöå.\s!%&/?]{2,}" required="required" value="{{this.address}}" class="form-input col-3">
+        <input type="text" placeholder="Address (Use ATLEAST two letters)" name="address" pattern="[A-Za-z0-9ÄÖÅäöå.\s!%&/?]{2,}" required="required" value="{{this.address}}" class="form-input col-3">
 
         <select name="score" class="form-select form-lg select-sm col-2">
             <option value="{{this.score}}">{{this.score}}</option>

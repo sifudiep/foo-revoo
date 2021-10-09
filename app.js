@@ -8,7 +8,8 @@ const csrf = require('csurf')
 const csrfProtection = csrf();
 const sqliteStore = require("better-sqlite3-session-store")(session);
 
-const homeURL = "https://foo-revoo.herokuapp.com/"
+// const homeURL = "https://foo-revoo.herokuapp.com/"
+const homeURL = "localhost:3000/"
 
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -37,7 +38,6 @@ const db = require("better-sqlite3")('storage/database.db', {
 // Name, Score, Review, Location, ImageLink
 
 let allRestaurants;
-let allAdmins;
 let allCities; 
 const port = process.env.PORT || 3000;
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
@@ -53,20 +53,6 @@ function updateAllRestaurants() {
 
 function updateAllCities() {
     allCities = db.prepare("SELECT * FROM cities").all();
-}
-
-function updateAllAdmins() {
-    allAdmins = db.prepare("SELECT * FROM admins").all();
-}
-
-function findUser(id) {
-    for (let i = 0; i < allAdmins.length; i++) {
-        if (allAdmins[i].id == id) {
-            return allAdmins[i];
-        } 
-    }
-
-    throw "User was not found";
 }
 
 function findCity(id) {
@@ -88,17 +74,6 @@ function authenticateUserIsAdmin(sessionId) {
     } 
     return false;
 }
-
-function authenticateUserIsOwner(sessionId) {
-    const row = db.prepare("SELECT * FROM sessions WHERE sid = ?").get(sessionId);
-    if (row) {
-        let sess = JSON.parse(row.sess);
-        if (sess.isOwner) return true;
-    } 
-    return false;
-}
-
-
 
 function removeOldSessions() {
     const allSessions = db.prepare("SELECT * FROM sessions").all();
@@ -211,9 +186,6 @@ app.get("/update-reviews", (req, res) => {
     })
 })
 
-
-
-
 app.get("/delete-reviews", (req, res) => {
     if (authenticateUserIsAdmin(req.sessionID) === false) {
         res.redirect("/access-denied");
@@ -235,37 +207,55 @@ app.get("/login", (req, res) => {
     res.render("login.hbs", {csrfToken: req.csrfToken()});
 })
 
-app.get("/register-admin", (req, res) => {
-    if (authenticateUserIsOwner(req.sessionID) === false) {
-        res.redirect("/access-denied");
-        return;
-    }
-
-    res.render("register-admin.hbs", {csrfToken: req.csrfToken()})
-})
-
-app.get("/update-admins", (req, res) => {
-    if (authenticateUserIsOwner(req.sessionID) === false) {
-        res.redirect("/access-denied");
-        return;
-    }
-    res.render("update-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
-})
-
-app.get("/delete-admins", (req, res) => {
-    if (authenticateUserIsOwner(req.sessionID) === false) {
-        res.redirect("/access-denied");
-        return;
-    }
-
-    res.render("delete-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
-})
-
 app.get("/search-reviews", (req, res) => {
     res.render("search-reviews.hbs", {allCities, csrf: req.csrfToken()});
 })
 
-app.post("/search-reviews", (req, res) => {
+app.get("/create-cities", (req, res) => {
+    res.render("create-cities.hbs", {csrfToken: req.csrfToken()});
+});
+
+app.get("/update-cities", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    updateAllCities();
+
+    res.render("update-cities.hbs", {allCities, csrfToken: req.csrfToken});
+})
+
+app.post("/create-cities", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    db.prepare("INSERT INTO cities (name, abbreviation) VALUES (?, ?)").run(req.body.name, req.body.abbreviation);
+
+    updateAllCities();
+
+    res.render("create-cities.hbs", {csrfToken: req.csrfToken})
+})
+
+app.post("/update-cities", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    db.prepare("UPDATE cities SET name = ?, abbreviation =? WHERE id = ?").run(req.body.name, req.body.abbreviation, req.body.id);
+
+    updateAllCities();
+
+    res.render("update-cities.hbs", {allCities, csrfToken: req.csrfToken()});
+})
+
+
+
+app.post("/search-for-reviews", (req, res) => {
+    console.log(`searching for reviews`);
     updateAllRestaurants();
     let searchedRestaurants = [];
     for (let i = 0; i < allRestaurants.length; i++) {
@@ -285,55 +275,6 @@ app.post("/search-reviews", (req, res) => {
     
     res.render("search-reviews.hbs", {allCities, csrf: req.csrfToken(), searchedRestaurants})
 })
-
-app.post("/delete-admins", (req, res) => {
-    if (authenticateUserIsOwner(req.sessionID) === false) {
-        res.redirect("/access-denied");
-        return;
-    }
-
-    if (findUser(req.body.id))
-        db.prepare("DELETE FROM admins WHERE id = ?").run(req.body.id)
-
-    updateAllAdmins();
-
-    res.render("delete-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
-})
-
-app.post("/update-admins", async(req, res) => {
-    if (authenticateUserIsOwner(req.sessionID) === false) {
-        res.redirect("/access-denied");
-        return;
-    }
-
-    let targetUser = findUser(req.body.id);
-
-    if (targetUser.password !== req.body.password) {
-        let salt = await bcrypt.genSalt(10);
-        let hash = await bcrypt.hash(req.body.password, salt);
-        targetUser.password = hash;
-    }
-
-    db.prepare("UPDATE admins SET email = ?, password = ?, loginAttempts = ? WHERE id = ?").run(req.body.email, targetUser.password, req.body.loginAttempts, req.body.id);
-    updateAllAdmins();
-
-    res.render("update-admins.hbs", {allAdmins, csrfToken: req.csrfToken()});
-})
-
-app.post("/register-admin", async (req,res) => {
-    if (authenticateUserIsOwner(req.sessionID) === false) {
-        res.redirect("/access-denied");
-        return;
-    }
-
-    let salt = await bcrypt.genSalt(10);
-    let hash = await bcrypt.hash(req.body.password, salt);
-
-    db.prepare("INSERT INTO admins (email, password, loginAttempts, isOwner) VALUES (?, ?, ?, ?)").run(req.body.email, hash, 0, 0);
-    updateAllAdmins();
-    res.render("register-admin.hbs", {csrfToken: req.csrfToken()})
-})
-
 
 app.post("/login", async (req, res) => {
     const user = db.prepare("SELECT * FROM admins WHERE email = ?").get(req.body.email);
@@ -422,6 +363,5 @@ app.listen(port, () => {
     setInterval(removeOldSessions, threeHoursInMilliseconds);
     updateAllCities();
     updateAllRestaurants();
-    updateAllAdmins();
 });
 

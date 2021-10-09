@@ -8,3 +8,8 @@
 -. Fix routing so that routes that doesnt exist i.e /DKALDMNTdkd shows error-404.hbs
 7. Refactor users to admins in database.
 8. Add city to review-view
+
+///
+
+Changes for localhost version: 
+Change Search Method Post --> Get 

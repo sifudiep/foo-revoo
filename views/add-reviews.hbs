@@ -1,7 +1,7 @@
-<form class="form-group columns" method="post" action="/add-reviews" enctype="multipart/form-data">
+<form class="form-group columns" method="post" action="add-reviews" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <label class="form-label">Name: </label>
-    <input class="form-input" type="text" name="name" placeholder="Name" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
+    <input class="form-input" type="text" name="name" placeholder="Name (Use ATLEAST two letters)" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
 
     <label for="score" class="form-label">Score: </label required="required">
     <select name="score" class="form-select select-sm">
@@ -29,7 +29,7 @@
 
 
     <label for="address" class="form-label">Address: </label>
-    <input class="form-input" type="text" name="address" placeholder="Address" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
+    <input class="form-input" type="text" name="address" placeholder="Address (Use ATLEAST two letters)" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
 
     <label for="imageLink" class="form-label">ImageLink: </label>
     <input class="form-input" type="file" name="restaurantImage" accept="image/png, image/jpeg">
