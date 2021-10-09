@@ -1,0 +1,13 @@
+AllCities.length : {{allCities.length}}
+{{#each allCities}}
+    <form class="form-group columns restaurant-container" method="post" action="delete-cities">
+    <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
+    <input type="hidden" name="id" value="{{this.id}}">
+    <label class="form-label">Name:</label>
+    <label class="form-input" type="text">{{this.name}}</label>
+
+    <label class="form-label">Abbreviation: </label>
+    <label class="form-input" type="text">{{this.abbreviation}}</label>
+    <input type="submit" class="btn btn-error col-12" style="margin-top: 10px" value="Delete City">
+</form>
+{{/each}}

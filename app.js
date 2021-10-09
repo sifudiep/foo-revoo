@@ -39,6 +39,7 @@ const db = require("better-sqlite3")('storage/database.db', {
 
 let allRestaurants;
 let allCities; 
+let allQuestions;
 const port = process.env.PORT || 3000;
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
 const loginAttemptsLimit = 5;
@@ -49,6 +50,10 @@ function updateAllRestaurants() {
     allRestaurants.forEach(restaurant => {
         restaurant.cityName = findCity(restaurant.cityId).name;
     });
+}
+
+function updateAllQuestions() {
+    allQuestions = db.prepare("SELECT * FROM questions").all();
 }
 
 function updateAllCities() {
@@ -212,6 +217,10 @@ app.get("/search-reviews", (req, res) => {
 })
 
 app.get("/create-cities", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
     res.render("create-cities.hbs", {csrfToken: req.csrfToken()});
 });
 
@@ -224,6 +233,36 @@ app.get("/update-cities", (req, res) => {
     updateAllCities();
 
     res.render("update-cities.hbs", {allCities, csrfToken: req.csrfToken});
+})
+
+app.get("/delete-cities", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    updateAllCities();
+
+    res.render("delete-cities.hbs", {allCities, csrfToken: req.csrfToken()});
+})
+
+app.get("/faq", (req, res) => {
+    updateAllQuestions();
+
+    res.render("faq.hbs", {allQuestions, csrfToken: req.csrfToken()});
+})
+
+app.post("/delete-cities", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    db.prepare("DELETE FROM cities WHERE id = ?").run(req.body.id);
+
+    updateAllCities();
+
+    res.render("delete-cities.hbs", {allCities, csrfToken: req.csrfToken()});
 })
 
 app.post("/create-cities", (req, res) => {
