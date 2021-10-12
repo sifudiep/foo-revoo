@@ -9,7 +9,6 @@ const csrfProtection = csrf();
 const sqliteStore = require("better-sqlite3-session-store")(session);
 
 const homeURL = "https://foo-revoo.herokuapp.com/"
-// const homeURL = "http://localhost:3000/"
 
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -34,12 +33,9 @@ const db = require("better-sqlite3")('storage/database.db', {
     fileMustExist: true
 });
 
-// MODEL ATTRIBUTES ORDER - 
-// Name, Score, Review, Location, ImageLink
-
 let allRestaurants;
 let allCities; 
-let allQuestions;
+let allFAQs;
 const port = process.env.PORT || 3000;
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
 const loginAttemptsLimit = 5;
@@ -52,8 +48,8 @@ function updateAllRestaurants() {
     });
 }
 
-function updateAllQuestions() {
-    allQuestions = db.prepare("SELECT * FROM questions").all();
+function updateAllFAQs() {
+    allFAQs = db.prepare("SELECT * FROM faqs").all();
 }
 
 function updateAllCities() {
@@ -70,7 +66,6 @@ function findCity(id) {
     throw "City was not found";
 }
 
-// Checks authentication from database instead of req.session, should be better for memory leaks?
 function authenticateUserIsAdmin(sessionId) {
     const row = db.prepare("SELECT * FROM sessions WHERE sid = ?").get(sessionId);
     if (row) {
@@ -247,9 +242,9 @@ app.get("/delete-cities", (req, res) => {
 })
 
 app.get("/faq", (req, res) => {
-    updateAllQuestions();
+    updateAllFAQs();
 
-    res.render("faq.hbs", {allQuestions, csrfToken: req.csrfToken()});
+    res.render("faq.hbs", {allFAQs, csrfToken: req.csrfToken()});
 })
 
 app.post("/delete-cities", (req, res) => {
