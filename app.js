@@ -117,7 +117,7 @@ app.engine('hbs', expressHandlebars({
     defaultLayout: "primary-layout.hbs"
 }))
 
-app.use(express.static("public"))
+app.use(express.static("styles"))
 
 app.get("/", (req, res) => {
     res.redirect("/all-reviews?page=1")
