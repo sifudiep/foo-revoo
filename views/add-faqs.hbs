@@ -1,0 +1,10 @@
+<form class="form-group columns" method="POST" action="add-faqs">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <label class="form-label" for="question">Question:</label>
+    <input class="form-input" type="text" name="question" placeholder="Question" required="required">
+
+    <label class="form-label" for="answer">Answer: </label>
+    <input class="form-input" type="text" name="answer" placeholder="Answer" required="required">
+
+    <input type="submit" class="btn btn-primary col-12" style="margin-top: 10px" value="Add FAQ">
+</form>

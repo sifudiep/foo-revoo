@@ -9,6 +9,7 @@ const csrfProtection = csrf();
 const sqliteStore = require("better-sqlite3-session-store")(session);
 
 const homeURL = "https://foo-revoo.herokuapp.com/"
+// const homeURL = "http://localhost:3000/"
 
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -211,12 +212,12 @@ app.get("/search-reviews", (req, res) => {
     res.render("search-reviews.hbs", {allCities, csrf: req.csrfToken()});
 })
 
-app.get("/create-cities", (req, res) => {
+app.get("/add-cities", (req, res) => {
     if (authenticateUserIsAdmin(req.sessionID) == false) {
         res.redirect("/access-denied");
         return;
     }
-    res.render("create-cities.hbs", {csrfToken: req.csrfToken()});
+    res.render("add-cities.hbs", {csrfToken: req.csrfToken()});
 });
 
 app.get("/update-cities", (req, res) => {
@@ -241,10 +242,73 @@ app.get("/delete-cities", (req, res) => {
     res.render("delete-cities.hbs", {allCities, csrfToken: req.csrfToken()});
 })
 
-app.get("/faq", (req, res) => {
+app.get("/faqs", (req, res) => {
     updateAllFAQs();
 
-    res.render("faq.hbs", {allFAQs, csrfToken: req.csrfToken()});
+    res.render("faqs.hbs", {allFAQs});
+})
+
+app.get("/add-faqs", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    res.render("add-faqs.hbs", {csrfToken: req.csrfToken()});
+})
+
+app.get("/update-faqs", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    updateAllFAQs();
+    res.render("update-faqs.hbs", {allFAQs, csrfToken: req.csrfToken()});
+})
+
+app.get("/delete-faqs", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    updateAllFAQs();
+    res.render("delete-faqs.hbs", {allFAQs, csrfToken: req.csrfToken()});
+})
+
+app.post("/delete-faqs", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    db.prepare("DELETE FROM faqs WHERE id = ?").run(req.body.id);
+
+    updateAllFAQs();
+    res.render("delete-faqs.hbs", {allFAQs, csrfToken: req.csrfToken()})
+})
+app.post("/update-faqs", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    db.prepare("UPDATE faqs SET question = ?, answer = ? WHERE id = ?").run(req.body.question, req.body.answer, req.body.id);
+
+    updateAllFAQs();
+    res.render("update-faqs.hbs", {allFAQs, csrfToken: req.csrfToken()})
+})
+
+app.post("/add-faqs", (req, res) => {
+    if (authenticateUserIsAdmin(req.sessionID) == false) {
+        res.redirect("/access-denied");
+        return;
+    }
+
+    db.prepare("INSERT INTO faqs (question, answer) VALUES (?, ?)").run(req.body.question, req.body.answer);
+
+    res.render("add-faqs.hbs", {csrfToken: req.csrfToken()});
 })
 
 app.post("/delete-cities", (req, res) => {
@@ -260,7 +324,7 @@ app.post("/delete-cities", (req, res) => {
     res.render("delete-cities.hbs", {allCities, csrfToken: req.csrfToken()});
 })
 
-app.post("/create-cities", (req, res) => {
+app.post("/add-cities", (req, res) => {
     if (authenticateUserIsAdmin(req.sessionID) == false) {
         res.redirect("/access-denied");
         return;
@@ -270,7 +334,7 @@ app.post("/create-cities", (req, res) => {
 
     updateAllCities();
 
-    res.render("create-cities.hbs", {csrfToken: req.csrfToken})
+    res.render("add-cities.hbs", {csrfToken: req.csrfToken})
 })
 
 app.post("/update-cities", (req, res) => {
@@ -337,11 +401,8 @@ app.post("/delete-reviews", (req, res) => {
         res.redirect("/access-denied");
         return;
     }
-    for (let i = 0; i < allRestaurants.length; i++) {
-        if (allRestaurants[i].id == req.body.id) {
-            db.prepare("DELETE FROM restaurants WHERE id = ?").run(req.body.id)
-        }
-    }
+    db.prepare("DELETE FROM restaurants WHERE id = ?").run(req.body.id)
+
 
     updateAllRestaurants();
     res.redirect("delete-reviews")

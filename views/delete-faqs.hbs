@@ -1,0 +1,14 @@
+<h3>All FAQs Count : {{allFAQs.length}}</h3>
+{{#each allFAQs}}
+    <form class="form-group columns form-container" method="POST" action="delete-faqs">
+        <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
+        <input type="hidden" name="id" value="{{this.id}}">
+        <label class="form-label">Question:</label>
+        <label class="form-input">{{this.question}}</label>
+
+        <label class="form-label">Answer: </label>
+        <label class="form-input">{{this.answer}}</label>
+
+        <input type="submit" class="btn btn-error col-12" style="margin-top: 10px" value="Delete FAQ">
+    </form>
+{{/each}}

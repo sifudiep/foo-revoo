@@ -1,14 +1,14 @@
-AllCities.length : {{allCities.length}}
+<h3>All Cities Count : {{allCities.length}}</h3>
 {{#each allCities}}
-    <form class="form-group columns restaurant-container" method="post" action="update-cities">
-    <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
-    <input type="hidden" name="id" value="{{this.id}}">
-    <label class="form-label">Name:</label>
-    <input class="form-input" type="text" name="name" placeholder="Name (Use ATLEAST two letters)" value="{{this.name}}" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
+    <form class="form-group columns form-container" method="POST" action="update-cities">
+        <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
+        <input type="hidden" name="id" value="{{this.id}}">
+        <label class="form-label" for="name">Name:</label>
+        <input class="form-input" type="text" name="name" placeholder="Name (Use ATLEAST two letters)" value="{{this.name}}" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
 
-    <label class="form-label">Abbreviation: </label>
-    <input class="form-input" type="text" name="abbreviation" value="{{this.abbreviation}}" placeholder="Abbreviation (Use ATLEAST two letters)" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}">
+        <label class="form-label" for="abbreviation">Abbreviation: </label>
+        <input class="form-input" type="text" name="abbreviation" value="{{this.abbreviation}}" placeholder="Abbreviation (Use ATLEAST two letters)" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}">
 
-    <input type="submit" class="btn btn-primary col-12" style="margin-top: 10px" value="Update City">
-</form>
+        <input type="submit" class="btn btn-primary col-12" style="margin-top: 10px" value="Update City">
+    </form>
 {{/each}}

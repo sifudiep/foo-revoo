@@ -1,7 +1,7 @@
 <h3>All restaurants count : {{allRestaurants.length}}</h3>
 
 {{#each allRestaurants}}
-    <form class="columns review-editor" method="post" action="delete-reviews">
+    <form class="columns review-editor" method="POST" action="delete-reviews">
         <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
         <label for="id" class="form-label col-1" style="background-color: white; text-align:center" name="id">
             {{this.id}}

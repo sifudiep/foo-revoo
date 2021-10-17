@@ -1,10 +1,10 @@
-<form class="form-group columns" method="post" action="create-cities">
+<form class="form-group columns" method="POST" action="add-cities">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <label class="form-label">Name:</label>
+    <label class="form-label" for="name">Name:</label>
     <input class="form-input" type="text" name="name" placeholder="Name (Use ATLEAST two letters)" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}" required="required">
 
-    <label class="form-label">Abbreviation: </label>
+    <label class="form-label" for="abbreviation">Abbreviation: </label>
     <input class="form-input" type="text" name="abbreviation" placeholder="Abbreviation (Use ATLEAST two letters)" pattern="[A-Za-z0-9öäåÖÄÅ.\s!%&/?]{2,}">
 
-    <input type="submit" class="btn btn-primary col-12" style="margin-top: 10px" value="Create City">
+    <input type="submit" class="btn btn-primary col-12" style="margin-top: 10px" value="Add City">
 </form>

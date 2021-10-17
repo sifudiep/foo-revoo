@@ -1,0 +1,14 @@
+<h3>All FAQs Count : {{allFAQs.length}}</h3>
+{{#each allFAQs}}
+    <form class="form-group columns form-container" method="POST" action="update-faqs">
+        <input type="hidden" name="_csrf" value="{{@root.csrfToken}}">
+        <input type="hidden" name="id" value="{{this.id}}">
+        <label class="form-label" for="question">Question:</label>
+        <input class="form-input" type="text" name="question" placeholder="Question" value="{{this.question}}" required="required">
+
+        <label class="form-label" for="answer">Answer: </label>
+        <input class="form-input" type="text" name="answer" placeholder="Answer" value="{{this.answer}}" required="required">
+
+        <input type="submit" class="btn btn-primary col-12" style="margin-top: 10px" value="Update FAQ">
+    </form>
+{{/each}}
