@@ -12,6 +12,7 @@ const homeURL = "https://foo-revoo.herokuapp.com/"
 // const homeURL = "http://localhost:3000/"
 
 const multer = require("multer");
+const { create } = require("express-handlebars");
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './images/');
@@ -89,7 +90,13 @@ function removeOldSessions() {
             db.prepare("DELETE FROM sessions WHERE sid = ?").run(allSessions[i].id);
         }
     }
+}
 
+function createTables() {
+    db.prepare("CREATE TABLE IF NOT EXISTS admins (id INTEGER, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, loginAttempts INTEGER, isOwner INTEGER, PRIMARY KEY(id AUTOINCREMENT))").run()
+    db.prepare("CREATE TABLE IF NOT EXISTS cities (id INTEGER NOT NULL, name TEXT NOT NULL UNIQUE, abbreviation TEXT, PRIMARY KEY(id AUTOINCREMENT))").run();
+    db.prepare("CREATE TABLE IF NOT EXISTS faqs (id INTEGER, question TEXT NOT NULL UNIQUE, answer TEXT NOT NULL, PRIMARY KEY(id AUTOINCREMENT))").run();
+    db.prepare("CREATE TABLE IF NOT EXISTS restaurants (id INTEGER,name TEXT NOT NULL UNIQUE,score INTEGER NOT NULL,review REAL NOT NULL,imageLink TEXT,address TEXT NOT NULL,cityId INTEGER NOT NULL,PRIMARY KEY(id AUTOINCREMENT),FOREIGN KEY(cityId) REFERENCES cities(id) ON DELETE CASCADE)").run()
 }
 
 app.use(express.urlencoded({
@@ -454,6 +461,7 @@ app.use((req, res) => {
 
 app.listen(port, () => {
     console.log("listening on port " + port)
+    createTables();
     removeOldSessions();
     setInterval(removeOldSessions, threeHoursInMilliseconds);
     updateAllCities();
