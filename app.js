@@ -166,7 +166,6 @@ app.get("/all-reviews", (req, res) => {
         page,
         nextPage,
         previousPage,
-        lastPage,
     })
 })
 

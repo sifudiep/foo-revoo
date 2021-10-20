@@ -3,14 +3,6 @@
 {{/each}}
 
 <ul class="pagination">
-  {{!-- FIRST ITEM --}}
-  <li class="page-item">
-    <a href="?page=1">1</a>
-  </li>
-
-  <li class="page-item">
-    <span>...</span>
-  </li>
   {{#if previousPage}}
   {{!-- PREVIOUS --}}
   <li class="page-item">
@@ -27,11 +19,4 @@
     <a href="?page={{nextPage}}">{{nextPage}}</a>
   </li>
   {{/if}}
-  <li class="page-item">
-    <span>...</span>
-  </li>
-  {{!-- LAST ITEM --}}
-  <li class="page-item">
-    <a href="?page={{lastPage}}">{{lastPage}}</a>
-  </li>
 </ul>
